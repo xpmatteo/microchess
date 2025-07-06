@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Microchess Game</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="game-container">
+        <h1>Microchess</h1>
+        <div id="game-board"></div>
+        <div id="game-status"></div>
+        <div id="game-controls"></div>
+    </div>
+    
+    <script type="module">
+        import { Game } from './js/game.js';
+        
+        // Initialize the game when the page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            try {
+                const game = new Game();
+                game.initialize();
+                console.log('Microchess game initialized successfully');
+            } catch (error) {
+                console.error('Failed to initialize game:', error);
+                document.getElementById('game-container').innerHTML = 
+                    '<h1>Error</h1><p>Failed to initialize the game. Please refresh the page.</p>';
+            }
+        });
+    </script>
+</body>
+</html>
