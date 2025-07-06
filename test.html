@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Microchess Tests</title>
+    <style>
+        body { font-family: monospace; padding: 20px; }
+        .test-pass { color: green; }
+        .test-fail { color: red; }
+        .test-result { margin: 5px 0; }
+        #test-container { margin-top: 20px; }
+    </style>
+</head>
+<body>
+    <h1>Microchess Tests</h1>
+    <div id="test-results"></div>
+    <div id="test-container">
+        <div id="game-container">
+            <div id="game-board"></div>
+            <div id="game-status"></div>
+            <div id="game-controls"></div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { Game } from './js/game.js';
+
+        const testResults = document.getElementById('test-results');
+        let testCount = 0;
+        let passCount = 0;
+
+        function assert(condition, message) {
+            testCount++;
+            const result = document.createElement('div');
+            result.className = 'test-result';
+            
+            if (condition) {
+                result.className += ' test-pass';
+                result.textContent = `✓ ${message}`;
+                passCount++;
+            } else {
+                result.className += ' test-fail';
+                result.textContent = `✗ ${message}`;
+            }
+            
+            testResults.appendChild(result);
+        }
+
+        function runTests() {
+            // Test 1: Game class can be instantiated
+            const game = new Game();
+            assert(game instanceof Game, 'Game class can be instantiated');
+
+            // Test 2: Game has empty board initially
+            const board = game.getBoard();
+            assert(Array.isArray(board), 'Game has a board array');
+            assert(board.length === 5, 'Board has 5 ranks');
+            assert(board[0].length === 4, 'Board has 4 files');
+
+            // Test 3: Board is initially empty
+            let isEmpty = true;
+            for (let rank = 0; rank < 5; rank++) {
+                for (let file = 0; file < 4; file++) {
+                    if (board[rank][file] !== null) {
+                        isEmpty = false;
+                        break;
+                    }
+                }
+            }
+            assert(isEmpty, 'Board is initially empty');
+
+            // Test 4: Game can initialize
+            game.initialize();
+            assert(true, 'Game initializes without errors');
+
+            // Test 5: Board renders with correct number of squares
+            const squares = document.querySelectorAll('.square');
+            assert(squares.length === 20, 'Board renders 20 squares (4x5)');
+
+            // Test 6: Squares have correct data attributes
+            let hasCorrectAttributes = true;
+            squares.forEach(square => {
+                const file = square.dataset.file;
+                const rank = square.dataset.rank;
+                if (file === undefined || rank === undefined ||
+                    parseInt(file) < 0 || parseInt(file) > 3 ||
+                    parseInt(rank) < 0 || parseInt(rank) > 4) {
+                    hasCorrectAttributes = false;
+                }
+            });
+            assert(hasCorrectAttributes, 'All squares have correct data attributes');
+
+            // Test 7: Squares have light/dark classes
+            const lightSquares = document.querySelectorAll('.square.light');
+            const darkSquares = document.querySelectorAll('.square.dark');
+            assert(lightSquares.length + darkSquares.length === 20, 'All squares have light or dark class');
+
+            // Test 8: File labels are present
+            const fileLabels = document.querySelectorAll('.file-label');
+            assert(fileLabels.length === 4, 'Four file labels present');
+            
+            // Test 9: Rank labels are present
+            const rankLabels = document.querySelectorAll('.rank-label');
+            assert(rankLabels.length === 5, 'Five rank labels present');
+
+            // Test 10: a1 square is dark (bottom-left)
+            const a1Square = document.querySelector('[data-file="0"][data-rank="0"]');
+            assert(a1Square && a1Square.classList.contains('dark'), 'a1 square is dark');
+
+            // Summary
+            const summary = document.createElement('div');
+            summary.style.marginTop = '20px';
+            summary.style.fontWeight = 'bold';
+            summary.textContent = `Tests: ${passCount}/${testCount} passed`;
+            summary.className = passCount === testCount ? 'test-pass' : 'test-fail';
+            testResults.appendChild(summary);
+        }
+
+        // Run tests after DOM is ready
+        document.addEventListener('DOMContentLoaded', runTests);
+    </script>
+</body>
+</html>

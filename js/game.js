@@ -40,6 +40,9 @@ export class Game {
                 throw new Error('Required DOM elements not found');
             }
 
+            // Render the board
+            this.renderBoard();
+
             // Set initial status
             this.statusElement.textContent = 'Game initialized - Ready to start';
             
@@ -56,6 +59,71 @@ export class Game {
             }
             throw error;
         }
+    }
+
+    /**
+     * Render the chess board as a 4x5 grid
+     */
+    renderBoard() {
+        // Clear existing board
+        this.boardElement.innerHTML = '';
+
+        // Create board container
+        const boardContainer = document.createElement('div');
+        boardContainer.className = 'board-container';
+
+        // Create rank labels (left side)
+        const rankLabels = document.createElement('div');
+        rankLabels.className = 'rank-labels';
+        for (let rank = 4; rank >= 0; rank--) {
+            const label = document.createElement('div');
+            label.className = 'rank-label';
+            label.textContent = (rank + 1).toString();
+            rankLabels.appendChild(label);
+        }
+
+        // Create the actual board grid
+        const boardGrid = document.createElement('div');
+        boardGrid.className = 'board-grid';
+
+        // Create squares (rank 4 at top, rank 0 at bottom)
+        for (let rank = 4; rank >= 0; rank--) {
+            for (let file = 0; file < 4; file++) {
+                const square = document.createElement('div');
+                square.className = 'square';
+                
+                // Add light/dark class - a1 should be dark
+                const isLight = (rank + file) % 2 === 1;
+                square.classList.add(isLight ? 'light' : 'dark');
+                
+                // Add data attributes for position
+                square.dataset.file = file.toString();
+                square.dataset.rank = rank.toString();
+                
+                boardGrid.appendChild(square);
+            }
+        }
+
+        // Create file labels (bottom)
+        const fileLabels = document.createElement('div');
+        fileLabels.className = 'file-labels';
+        for (let file = 0; file < 4; file++) {
+            const label = document.createElement('div');
+            label.className = 'file-label';
+            label.textContent = String.fromCharCode(97 + file); // 'a', 'b', 'c', 'd'
+            fileLabels.appendChild(label);
+        }
+
+        // Assemble the board
+        const boardWithRanks = document.createElement('div');
+        boardWithRanks.className = 'board-with-ranks';
+        boardWithRanks.appendChild(rankLabels);
+        boardWithRanks.appendChild(boardGrid);
+
+        boardContainer.appendChild(boardWithRanks);
+        boardContainer.appendChild(fileLabels);
+
+        this.boardElement.appendChild(boardContainer);
     }
 
     /**

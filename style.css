@@ -39,6 +39,79 @@ h1 {
     padding: 10px;
 }
 
+.board-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.board-with-ranks {
+    display: flex;
+    align-items: center;
+}
+
+.rank-labels {
+    display: flex;
+    flex-direction: column;
+    margin-right: 5px;
+}
+
+.rank-label {
+    height: 80px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    color: #f0d9b5;
+    font-size: 14px;
+    width: 20px;
+}
+
+.board-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 80px);
+    grid-template-rows: repeat(5, 80px);
+    gap: 0;
+    border: 1px solid #333;
+}
+
+.square {
+    width: 80px;
+    height: 80px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 60px;
+    cursor: pointer;
+    user-select: none;
+    position: relative;
+}
+
+.square.light {
+    background-color: #f0d9b5;
+}
+
+.square.dark {
+    background-color: #b58863;
+}
+
+.square:hover {
+    opacity: 0.8;
+}
+
+.file-labels {
+    display: flex;
+    margin-top: 5px;
+}
+
+.file-label {
+    width: 80px;
+    text-align: center;
+    font-weight: bold;
+    color: #f0d9b5;
+    font-size: 14px;
+}
+
 #game-status {
     margin: 20px 0;
     font-size: 1.2em;
