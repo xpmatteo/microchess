@@ -28,12 +28,12 @@
   - [x] Test piece display
 
 ## Phase 2: Game Logic
-- [ ] Step 4: Move Validation (Prompt 4)
-  - [ ] Create js/moves.js
-  - [ ] Implement piece movement rules
-  - [ ] Add path checking
-  - [ ] Write unit tests
-  - [ ] Test each piece type
+- [x] Step 4: Move Validation (Prompt 4)
+  - [x] Create js/moves.js
+  - [x] Implement piece movement rules
+  - [x] Add path checking
+  - [x] Write unit tests
+  - [x] Test each piece type
 
 - [ ] Step 5: Game State (Prompt 5)
   - [ ] Create js/gameState.js
