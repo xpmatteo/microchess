@@ -6,12 +6,12 @@
 - [ ] Ready to begin with Prompt 1
 
 ## Phase 1: Foundation
-- [ ] Step 1: Project Setup (Prompt 1)
-  - [ ] Create index.html
-  - [ ] Create style.css
-  - [ ] Create js/game.js
-  - [ ] Initialize game on page load
-  - [ ] Verify basic structure works
+- [x] Step 1: Project Setup (Prompt 1)
+  - [x] Create index.html
+  - [x] Create style.css
+  - [x] Create js/game.js
+  - [x] Initialize game on page load
+  - [x] Verify basic structure works
 
 - [ ] Step 2: Board Rendering (Prompt 2)
   - [ ] Create 4x5 grid
