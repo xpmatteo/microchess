@@ -1,6 +1,8 @@
 // ABOUTME: Main game class that manages the microchess game state and coordinates all game components
 // ABOUTME: Handles initialization, board setup, and serves as the primary controller for the game
 
+import { PIECE_SYMBOLS, INITIAL_POSITION } from './pieces.js';
+
 export class Game {
     constructor() {
         this.board = this.createEmptyBoard();
@@ -43,8 +45,12 @@ export class Game {
             // Render the board
             this.renderBoard();
 
+            // Set up initial position and render pieces
+            this.setupInitialPosition();
+            this.renderPieces();
+
             // Set initial status
-            this.statusElement.textContent = 'Game initialized - Ready to start';
+            this.statusElement.textContent = 'White to move';
             
             // Add basic controls
             this.setupControls();
@@ -155,7 +161,9 @@ export class Game {
      */
     newGame() {
         this.board = this.createEmptyBoard();
-        this.statusElement.textContent = 'New game started - Setting up board...';
+        this.setupInitialPosition();
+        this.renderPieces();
+        this.statusElement.textContent = 'White to move';
         console.log('New game started');
     }
 
@@ -201,5 +209,43 @@ export class Game {
         }
         this.board[rank][file] = piece;
         return true;
+    }
+
+    /**
+     * Set up the initial microchess position
+     */
+    setupInitialPosition() {
+        // Copy the initial position to the board
+        for (let rank = 0; rank < 5; rank++) {
+            for (let file = 0; file < 4; file++) {
+                this.board[rank][file] = INITIAL_POSITION[rank][file];
+            }
+        }
+    }
+
+    /**
+     * Render pieces on the board
+     */
+    renderPieces() {
+        // Clear existing pieces
+        const existingPieces = document.querySelectorAll('.square span[data-piece]');
+        existingPieces.forEach(piece => piece.remove());
+
+        // Render pieces from current board state
+        for (let rank = 0; rank < 5; rank++) {
+            for (let file = 0; file < 4; file++) {
+                const piece = this.board[rank][file];
+                if (piece !== null) {
+                    const square = document.querySelector(`[data-file="${file}"][data-rank="${rank}"]`);
+                    if (square) {
+                        const pieceSpan = document.createElement('span');
+                        pieceSpan.dataset.piece = piece.piece;
+                        pieceSpan.dataset.color = piece.color;
+                        pieceSpan.textContent = PIECE_SYMBOLS[piece.color][piece.piece];
+                        square.appendChild(pieceSpan);
+                    }
+                }
+            }
+        }
     }
 }

@@ -13,12 +13,12 @@
   - [x] Initialize game on page load
   - [x] Verify basic structure works
 
-- [ ] Step 2: Board Rendering (Prompt 2)
-  - [ ] Create 4x5 grid
-  - [ ] Add alternating colors
-  - [ ] Add file/rank labels
-  - [ ] Style board appropriately
-  - [ ] Test board display
+- [x] Step 2: Board Rendering (Prompt 2)
+  - [x] Create 4x5 grid
+  - [x] Add alternating colors
+  - [x] Add file/rank labels
+  - [x] Style board appropriately
+  - [x] Test board display
 
 - [ ] Step 3: Piece Placement (Prompt 3)
   - [ ] Create js/pieces.js

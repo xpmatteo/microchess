@@ -183,4 +183,113 @@ describe('Game Class', () => {
       expect(hintBtn.disabled).toBe(true);
     });
   });
+
+  describe('Piece Rendering', () => {
+    test('should have a renderPieces method', () => {
+      const game = new Game();
+      expect(typeof game.renderPieces).toBe('function');
+    });
+
+    test('should set up initial position when calling setupInitialPosition', () => {
+      const game = new Game();
+      game.setupInitialPosition();
+      
+      // Check that board is no longer empty
+      const board = game.getBoard();
+      let haspiece = false;
+      for (let rank = 0; rank < 5; rank++) {
+        for (let file = 0; file < 4; file++) {
+          if (board[rank][file] !== null) {
+            haspiece = true;
+            break;
+          }
+        }
+      }
+      expect(haspiece).toBe(true);
+    });
+
+    test('should render pieces as spans with correct data attributes', () => {
+      const game = new Game();
+      game.initialize();
+      game.setupInitialPosition();
+      game.renderPieces();
+      
+      const pieceSpans = document.querySelectorAll('.square span[data-piece]');
+      expect(pieceSpans.length).toBeGreaterThan(0);
+      
+      pieceSpans.forEach(span => {
+        expect(span.dataset.piece).toBeDefined();
+        expect(span.dataset.color).toBeDefined();
+        expect(['white', 'black']).toContain(span.dataset.color);
+        expect(['K', 'Q', 'R', 'B', 'N', 'P']).toContain(span.dataset.piece);
+      });
+    });
+
+    test('should render white king on d1', () => {
+      const game = new Game();
+      game.initialize();
+      game.setupInitialPosition();
+      game.renderPieces();
+      
+      const d1Square = document.querySelector('[data-file="3"][data-rank="0"]');
+      const pieceSpan = d1Square.querySelector('span[data-piece]');
+      
+      expect(pieceSpan).toBeTruthy();
+      expect(pieceSpan.dataset.piece).toBe('K');
+      expect(pieceSpan.dataset.color).toBe('white');
+      expect(pieceSpan.textContent).toBe('♔');
+    });
+
+    test('should render black king on d5', () => {
+      const game = new Game();
+      game.initialize();
+      game.setupInitialPosition();
+      game.renderPieces();
+      
+      const d5Square = document.querySelector('[data-file="3"][data-rank="4"]');
+      const pieceSpan = d5Square.querySelector('span[data-piece]');
+      
+      expect(pieceSpan).toBeTruthy();
+      expect(pieceSpan.dataset.piece).toBe('K');
+      expect(pieceSpan.dataset.color).toBe('black');
+      expect(pieceSpan.textContent).toBe('♚');
+    });
+
+    test('should render exactly 10 pieces total', () => {
+      const game = new Game();
+      game.initialize();
+      game.setupInitialPosition();
+      game.renderPieces();
+      
+      const pieceSpans = document.querySelectorAll('.square span[data-piece]');
+      expect(pieceSpans.length).toBe(10);
+    });
+
+    test('should render 5 white pieces and 5 black pieces', () => {
+      const game = new Game();
+      game.initialize();
+      game.setupInitialPosition();
+      game.renderPieces();
+      
+      const whitePieces = document.querySelectorAll('.square span[data-color="white"]');
+      const blackPieces = document.querySelectorAll('.square span[data-color="black"]');
+      
+      expect(whitePieces.length).toBe(5);
+      expect(blackPieces.length).toBe(5);
+    });
+
+    test('should not render pieces on empty squares', () => {
+      const game = new Game();
+      game.initialize();
+      game.setupInitialPosition();
+      game.renderPieces();
+      
+      // Check that middle rank (index 2) has no pieces
+      const middleRankSquares = document.querySelectorAll('[data-rank="2"]');
+      middleRankSquares.forEach(square => {
+        const pieceSpan = square.querySelector('span[data-piece]');
+        expect(pieceSpan).toBeFalsy();
+      });
+    });
+  });
 });
