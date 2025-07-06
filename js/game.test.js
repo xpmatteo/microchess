@@ -240,14 +240,14 @@ describe('Game Class', () => {
       expect(pieceSpan.textContent).toBe('♔');
     });
 
-    test('should render black king on d5', () => {
+    test('should render black king on a5', () => {
       const game = new Game();
       game.initialize();
       game.setupInitialPosition();
       game.renderPieces();
       
-      const d5Square = document.querySelector('[data-file="3"][data-rank="4"]');
-      const pieceSpan = d5Square.querySelector('span[data-piece]');
+      const a5Square = document.querySelector('[data-file="0"][data-rank="4"]');
+      const pieceSpan = a5Square.querySelector('span[data-piece]');
       
       expect(pieceSpan).toBeTruthy();
       expect(pieceSpan.dataset.piece).toBe('K');

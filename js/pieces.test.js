@@ -46,41 +46,41 @@ describe('Pieces Module', () => {
     test('should have white pieces on rank 1 (index 0)', () => {
       const whiteBackRank = INITIAL_POSITION[0];
       expect(whiteBackRank[0]).toEqual({ piece: 'R', color: 'white' }); // a1 - Rook
-      expect(whiteBackRank[1]).toEqual({ piece: 'N', color: 'white' }); // b1 - Knight
-      expect(whiteBackRank[2]).toEqual({ piece: 'B', color: 'white' }); // c1 - Bishop
+      expect(whiteBackRank[1]).toEqual({ piece: 'B', color: 'white' }); // b1 - Bishop
+      expect(whiteBackRank[2]).toEqual({ piece: 'N', color: 'white' }); // c1 - Knight
       expect(whiteBackRank[3]).toEqual({ piece: 'K', color: 'white' }); // d1 - King
     });
 
-    test('should have white pawn on b2 (rank 1, file 1)', () => {
-      expect(INITIAL_POSITION[1][1]).toEqual({ piece: 'P', color: 'white' }); // b2 - Pawn
+    test('should have white pawn on d2 (rank 1, file 3)', () => {
+      expect(INITIAL_POSITION[1][3]).toEqual({ piece: 'P', color: 'white' }); // d2 - Pawn
     });
 
-    test('should have black pawn on b4 (rank 3, file 1)', () => {
-      expect(INITIAL_POSITION[3][1]).toEqual({ piece: 'P', color: 'black' }); // b4 - Pawn
+    test('should have black pawn on a4 (rank 3, file 0)', () => {
+      expect(INITIAL_POSITION[3][0]).toEqual({ piece: 'P', color: 'black' }); // a4 - Pawn
     });
 
     test('should have black pieces on rank 5 (index 4)', () => {
       const blackBackRank = INITIAL_POSITION[4];
-      expect(blackBackRank[0]).toEqual({ piece: 'R', color: 'black' }); // a5 - Rook
+      expect(blackBackRank[0]).toEqual({ piece: 'K', color: 'black' }); // a5 - King
       expect(blackBackRank[1]).toEqual({ piece: 'N', color: 'black' }); // b5 - Knight
       expect(blackBackRank[2]).toEqual({ piece: 'B', color: 'black' }); // c5 - Bishop
-      expect(blackBackRank[3]).toEqual({ piece: 'K', color: 'black' }); // d5 - King
+      expect(blackBackRank[3]).toEqual({ piece: 'R', color: 'black' }); // d5 - Rook
     });
 
     test('should have empty squares in correct positions', () => {
       // Rank 1 (index 0) should have pieces only on a1, b1, c1, d1
-      // Rank 2 (index 1) should have piece only on b2, others null
+      // Rank 2 (index 1) should have piece only on d2, others null
       expect(INITIAL_POSITION[1][0]).toBeNull(); // a2
+      expect(INITIAL_POSITION[1][1]).toBeNull(); // b2
       expect(INITIAL_POSITION[1][2]).toBeNull(); // c2
-      expect(INITIAL_POSITION[1][3]).toBeNull(); // d2
 
       // Rank 3 (index 2) should be completely empty
       INITIAL_POSITION[2].forEach(square => {
         expect(square).toBeNull();
       });
 
-      // Rank 4 (index 3) should have piece only on b4, others null
-      expect(INITIAL_POSITION[3][0]).toBeNull(); // a4
+      // Rank 4 (index 3) should have piece only on a4, others null
+      expect(INITIAL_POSITION[3][1]).toBeNull(); // b4
       expect(INITIAL_POSITION[3][2]).toBeNull(); // c4
       expect(INITIAL_POSITION[3][3]).toBeNull(); // d4
 

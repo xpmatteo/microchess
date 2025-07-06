@@ -20,12 +20,12 @@
   - [x] Style board appropriately
   - [x] Test board display
 
-- [ ] Step 3: Piece Placement (Prompt 3)
-  - [ ] Create js/pieces.js
-  - [ ] Define piece symbols
-  - [ ] Set initial position
-  - [ ] Render pieces on board
-  - [ ] Test piece display
+- [x] Step 3: Piece Placement (Prompt 3)
+  - [x] Create js/pieces.js
+  - [x] Define piece symbols
+  - [x] Set initial position
+  - [x] Render pieces on board
+  - [x] Test piece display
 
 ## Phase 2: Game Logic
 - [ ] Step 4: Move Validation (Prompt 4)

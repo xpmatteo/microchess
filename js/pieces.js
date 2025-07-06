@@ -26,16 +26,16 @@ export const INITIAL_POSITION = [
     // Rank 1 (white back rank)
     [
         { piece: 'R', color: 'white' }, // a1
-        { piece: 'N', color: 'white' }, // b1
-        { piece: 'B', color: 'white' }, // c1
+        { piece: 'B', color: 'white' }, // b1
+        { piece: 'N', color: 'white' }, // c1
         { piece: 'K', color: 'white' }  // d1
     ],
     // Rank 2
     [
         null,                           // a2
-        { piece: 'P', color: 'white' }, // b2
+        null,                           // b2
         null,                           // c2
-        null                            // d2
+        { piece: 'P', color: 'white' }  // d2
     ],
     // Rank 3 (empty)
     [
@@ -46,16 +46,16 @@ export const INITIAL_POSITION = [
     ],
     // Rank 4
     [
-        null,                           // a4
-        { piece: 'P', color: 'black' }, // b4
+        { piece: 'P', color: 'black' }, // a4
+        null,                           // b4
         null,                           // c4
         null                            // d4
     ],
     // Rank 5 (black back rank)
     [
-        { piece: 'R', color: 'black' }, // a5
+        { piece: 'K', color: 'black' }, // a5
         { piece: 'N', color: 'black' }, // b5
         { piece: 'B', color: 'black' }, // c5
-        { piece: 'K', color: 'black' }  // d5
+        { piece: 'R', color: 'black' }  // d5
     ]
 ];
