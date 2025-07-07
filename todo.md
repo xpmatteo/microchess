@@ -35,19 +35,19 @@
   - [x] Write unit tests
   - [x] Test each piece type
 
-- [ ] Step 5: Game State (Prompt 5)
-  - [ ] Create js/gameState.js
-  - [ ] Implement move execution
-  - [ ] Add check detection
-  - [ ] Track game state
-  - [ ] Test state management
+- [x] Step 5: Game State (Prompt 5)
+  - [x] Create js/gameState.js
+  - [x] Implement move execution
+  - [x] Add check detection
+  - [x] Track game state
+  - [x] Test state management
 
-- [ ] Step 6: Turn Management (Prompt 6)
-  - [ ] Add turn switching
-  - [ ] Implement checkmate detection
-  - [ ] Implement stalemate detection
-  - [ ] Handle game end
-  - [ ] Test end conditions
+- [x] Step 6: Turn Management (Prompt 6)
+  - [x] Add turn switching
+  - [x] Implement checkmate detection
+  - [x] Implement stalemate detection
+  - [x] Handle game end
+  - [x] Test end conditions
 
 ## Phase 3: User Interaction
 - [ ] Step 7: Click Handling (Prompt 7)

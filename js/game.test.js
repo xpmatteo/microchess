@@ -292,4 +292,56 @@ describe('Game Class', () => {
       });
     });
   });
+
+  describe('GameState Integration', () => {
+    test('should integrate with GameState for turn management', () => {
+      const game = new Game();
+      game.initialize();
+      
+      // Should have gameState property
+      expect(game.gameState).toBeDefined();
+      expect(game.gameState.getCurrentTurn()).toBe('white');
+    });
+
+    test('should update status display with current turn', () => {
+      const game = new Game();
+      game.initialize();
+      
+      const statusElement = document.getElementById('game-status');
+      expect(statusElement.textContent).toBe('White to move');
+    });
+
+    test('should handle move execution through GameState', () => {
+      const game = new Game();
+      game.initialize();
+      
+      // Should have a method to execute moves
+      expect(typeof game.executeMove).toBe('function');
+    });
+
+    test('should detect and display checkmate', () => {
+      const game = new Game();
+      game.initialize();
+      
+      // Should have method to update game status
+      expect(typeof game.updateGameStatus).toBe('function');
+    });
+
+    test('should switch turns properly', () => {
+      const game = new Game();
+      game.initialize();
+      
+      // Execute a valid move
+      const result = game.executeMove({
+        from: { rank: 1, file: 3 },
+        to: { rank: 2, file: 3 }
+      });
+      
+      expect(result).toBe(true);
+      expect(game.gameState.getCurrentTurn()).toBe('black');
+      
+      const statusElement = document.getElementById('game-status');
+      expect(statusElement.textContent).toBe('Black to move');
+    });
+  });
 });

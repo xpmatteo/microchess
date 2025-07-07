@@ -2,6 +2,7 @@
 // ABOUTME: Handles initialization, board setup, and serves as the primary controller for the game
 
 import { PIECE_SYMBOLS, INITIAL_POSITION } from './pieces.js';
+import { GameState } from './gameState.js';
 
 export class Game {
     constructor() {
@@ -10,6 +11,7 @@ export class Game {
         this.boardElement = null;
         this.statusElement = null;
         this.controlsElement = null;
+        this.gameState = null;
     }
 
     /**
@@ -49,8 +51,11 @@ export class Game {
             this.setupInitialPosition();
             this.renderPieces();
 
+            // Initialize GameState
+            this.gameState = new GameState();
+            
             // Set initial status
-            this.statusElement.textContent = 'White to move';
+            this.updateGameStatus();
             
             // Add basic controls
             this.setupControls();
@@ -163,7 +168,13 @@ export class Game {
         this.board = this.createEmptyBoard();
         this.setupInitialPosition();
         this.renderPieces();
-        this.statusElement.textContent = 'White to move';
+        
+        // Reset GameState
+        if (this.gameState) {
+            this.gameState = new GameState();
+        }
+        
+        this.updateGameStatus();
         console.log('New game started');
     }
 
@@ -246,6 +257,48 @@ export class Game {
                     }
                 }
             }
+        }
+    }
+
+    /**
+     * Execute a move using GameState
+     */
+    executeMove(move) {
+        if (!this.gameState) {
+            return false;
+        }
+        
+        const result = this.gameState.executeMove(move);
+        if (result) {
+            // Update the visual board from GameState
+            this.board = this.gameState.getBoard();
+            this.renderPieces();
+            this.updateGameStatus();
+        }
+        return result;
+    }
+
+    /**
+     * Update game status display
+     */
+    updateGameStatus() {
+        if (!this.gameState || !this.statusElement) {
+            return;
+        }
+        
+        const currentTurn = this.gameState.getCurrentTurn();
+        const gameStatus = this.gameState.getGameStatus();
+        
+        if (gameStatus === 'checkmate') {
+            const winner = currentTurn === 'white' ? 'Black' : 'White';
+            this.statusElement.textContent = `Checkmate! ${winner} wins!`;
+        } else if (gameStatus === 'stalemate') {
+            this.statusElement.textContent = 'Stalemate! Draw!';
+        } else if (gameStatus === 'resigned') {
+            this.statusElement.textContent = 'Game resigned';
+        } else {
+            const turnText = currentTurn === 'white' ? 'White' : 'Black';
+            this.statusElement.textContent = `${turnText} to move`;
         }
     }
 }
