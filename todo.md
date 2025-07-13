@@ -64,12 +64,12 @@
   - [x] Show check warning
   - [x] Test all feedback
 
-- [ ] Step 9: Game Status (Prompt 9)
-  - [ ] Add status display
-  - [ ] Add control buttons
-  - [ ] Implement new game
-  - [ ] Implement resign
-  - [ ] Test controls
+- [x] Step 9: Game Status (Prompt 9)
+  - [x] Add status display
+  - [x] Add control buttons
+  - [x] Implement new game
+  - [x] Implement resign
+  - [x] Test controls
 
 ## Phase 4: AI Implementation
 - [ ] Step 10: Evaluation (Prompt 10)
