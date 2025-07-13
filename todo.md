@@ -50,12 +50,12 @@
   - [x] Test end conditions
 
 ## Phase 3: User Interaction
-- [ ] Step 7: Click Handling (Prompt 7)
-  - [ ] Create js/ui.js
-  - [ ] Implement piece selection
-  - [ ] Show valid moves
-  - [ ] Handle move execution
-  - [ ] Test interaction
+- [x] Step 7: Click Handling (Prompt 7)
+  - [x] Create js/ui.js (integrated into MVC architecture)
+  - [x] Implement piece selection
+  - [x] Show valid moves
+  - [x] Handle move execution
+  - [x] Test interaction
 
 - [ ] Step 8: Visual Feedback (Prompt 8)
   - [ ] Highlight selected piece
