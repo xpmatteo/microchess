@@ -72,12 +72,12 @@
   - [x] Test controls
 
 ## Phase 4: AI Implementation
-- [ ] Step 10: Evaluation (Prompt 10)
-  - [ ] Create js/ai.js
-  - [ ] Implement evaluation function
-  - [ ] Add positional scoring
-  - [ ] Test evaluation
-  - [ ] Verify scores
+- [x] Step 10: Evaluation (Prompt 10)
+  - [x] Create js/ai.js
+  - [x] Implement evaluation function
+  - [x] Add positional scoring
+  - [x] Test evaluation
+  - [x] Verify scores
 
 - [ ] Step 11: Minimax (Prompt 11)
   - [ ] Implement minimax algorithm
