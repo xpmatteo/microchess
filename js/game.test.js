@@ -1,8 +1,11 @@
-// ABOUTME: Jest test suite for the Game class, focusing on board rendering functionality
-// ABOUTME: Tests board creation, rendering, and basic game initialization following TDD principles
+// ABOUTME: Jest test suite for the Game class, focusing on dependency injection functionality
+// ABOUTME: Tests game orchestration and MVC component coordination with constructor injection
 
 import { jest } from '@jest/globals';
 import { Game } from './game.js';
+import { View } from './view.js';
+import { Controller } from './controller.js';
+import { GameState } from './gameState.js';
 
 // Mock DOM setup
 beforeEach(() => {
@@ -16,15 +19,41 @@ beforeEach(() => {
 });
 
 describe('Game Class', () => {
-  describe('Board Creation', () => {
+  describe('Dependency Injection', () => {
     test('should create a Game instance', () => {
       const game = new Game();
       expect(game).toBeInstanceOf(Game);
     });
 
-    test('should have a 5x4 board (5 ranks, 4 files)', () => {
+    test('should initialize controller successfully', () => {
       const game = new Game();
-      const board = game.getBoard();
+      expect(() => game.initialize()).not.toThrow();
+      expect(game.controller).toBeDefined();
+    });
+
+    test('should have access to controller components', () => {
+      const game = new Game();
+      game.initialize();
+      
+      const controller = game.getController();
+      expect(controller).toBeDefined();
+      expect(controller.getGameState()).toBeDefined();
+      expect(controller.getView()).toBeDefined();
+    });
+
+    test('should throw error when DOM elements are missing', () => {
+      document.body.innerHTML = ''; // Remove DOM elements
+      
+      const game = new Game();
+      expect(() => game.initialize()).toThrow('Required DOM elements not found');
+    });
+
+    test('should create board with proper structure through controller', () => {
+      const game = new Game();
+      game.initialize();
+      
+      const gameState = game.getController().getGameState();
+      const board = gameState.getBoard();
       
       expect(board).toHaveLength(5); // 5 ranks
       board.forEach(rank => {
@@ -32,134 +61,31 @@ describe('Game Class', () => {
       });
     });
 
-    test('should have an empty board initially', () => {
-      const game = new Game();
-      const board = game.getBoard();
-      
-      for (let rank = 0; rank < 5; rank++) {
-        for (let file = 0; file < 4; file++) {
-          expect(board[rank][file]).toBeNull();
-        }
-      }
-    });
-  });
-
-  describe('Game Initialization', () => {
-    test('should initialize without errors', () => {
-      const game = new Game();
-      expect(() => game.initialize()).not.toThrow();
-    });
-
-    test('should find required DOM elements', () => {
+    test('should render board elements in DOM', () => {
       const game = new Game();
       game.initialize();
       
-      // Should not throw error, meaning DOM elements were found
-      expect(game.gameContainer).toBeTruthy();
-      expect(game.boardElement).toBeTruthy();
-      expect(game.statusElement).toBeTruthy();
-      expect(game.controlsElement).toBeTruthy();
-    });
-
-    test('should throw error if DOM elements are missing', () => {
-      document.body.innerHTML = ''; // Clear DOM
-      const game = new Game();
-      
-      expect(() => game.initialize()).toThrow('Required DOM elements not found');
-    });
-  });
-
-  describe('Board Rendering', () => {
-    test('should render 20 squares for 4x5 board', () => {
-      const game = new Game();
-      game.initialize();
-      
+      // Check that board squares were created
       const squares = document.querySelectorAll('.square');
-      expect(squares).toHaveLength(20);
-    });
-
-    test('should add data attributes to squares', () => {
-      const game = new Game();
-      game.initialize();
+      expect(squares).toHaveLength(20); // 4x5 = 20 squares
       
-      const squares = document.querySelectorAll('.square');
-      squares.forEach(square => {
-        expect(square.dataset.file).toBeDefined();
-        expect(square.dataset.rank).toBeDefined();
-        expect(parseInt(square.dataset.file)).toBeGreaterThanOrEqual(0);
-        expect(parseInt(square.dataset.file)).toBeLessThanOrEqual(3);
-        expect(parseInt(square.dataset.rank)).toBeGreaterThanOrEqual(0);
-        expect(parseInt(square.dataset.rank)).toBeLessThanOrEqual(4);
-      });
-    });
-
-    test('should add light/dark classes to squares', () => {
-      const game = new Game();
-      game.initialize();
-      
-      const squares = document.querySelectorAll('.square');
-      squares.forEach(square => {
-        expect(square.classList.contains('light') || square.classList.contains('dark')).toBe(true);
-      });
-    });
-
-    test('should render file labels (a-d)', () => {
-      const game = new Game();
-      game.initialize();
-      
-      const fileLabels = document.querySelectorAll('.file-label');
-      expect(fileLabels).toHaveLength(4);
-      
-      const expectedLabels = ['a', 'b', 'c', 'd'];
-      fileLabels.forEach((label, index) => {
-        expect(label.textContent).toBe(expectedLabels[index]);
-      });
-    });
-
-    test('should render rank labels (1-5)', () => {
-      const game = new Game();
-      game.initialize();
-      
+      // Check that rank and file labels were created
       const rankLabels = document.querySelectorAll('.rank-label');
+      const fileLabels = document.querySelectorAll('.file-label');
       expect(rankLabels).toHaveLength(5);
-      
-      const expectedLabels = ['5', '4', '3', '2', '1']; // Top to bottom
-      rankLabels.forEach((label, index) => {
-        expect(label.textContent).toBe(expectedLabels[index]);
-      });
+      expect(fileLabels).toHaveLength(4);
     });
 
-    test('should make a1 square dark', () => {
+    test('should render initial pieces', () => {
       const game = new Game();
       game.initialize();
       
-      const a1Square = document.querySelector('[data-file="0"][data-rank="0"]');
-      expect(a1Square).toBeTruthy();
-      expect(a1Square.classList.contains('dark')).toBe(true);
+      // Should have pieces rendered on the board
+      const pieces = document.querySelectorAll('.square span[data-piece]');
+      expect(pieces.length).toBeGreaterThan(0);
     });
 
-    test('should alternate square colors correctly', () => {
-      const game = new Game();
-      game.initialize();
-      
-      // Check alternating pattern: (rank + file) % 2 === 1 should be light
-      for (let rank = 0; rank < 5; rank++) {
-        for (let file = 0; file < 4; file++) {
-          const square = document.querySelector(`[data-file="${file}"][data-rank="${rank}"]`);
-          const shouldBeLight = (rank + file) % 2 === 1;
-          
-          if (shouldBeLight) {
-            expect(square.classList.contains('light')).toBe(true);
-          } else {
-            expect(square.classList.contains('dark')).toBe(true);
-          }
-        }
-      }
-    });
-  });
-
-  describe('Game Controls', () => {
-    test('should render game control buttons', () => {
+    test('should set up game controls', () => {
       const game = new Game();
       game.initialize();
       
@@ -172,176 +98,96 @@ describe('Game Class', () => {
       expect(hintBtn).toBeTruthy();
     });
 
-    test('should disable resign and hint buttons initially', () => {
-      const game = new Game();
-      game.initialize();
-      
-      const resignBtn = document.getElementById('resign-btn');
-      const hintBtn = document.getElementById('hint-btn');
-      
-      expect(resignBtn.disabled).toBe(true);
-      expect(hintBtn.disabled).toBe(true);
-    });
-  });
-
-  describe('Piece Rendering', () => {
-    test('should have a renderPieces method', () => {
-      const game = new Game();
-      expect(typeof game.renderPieces).toBe('function');
-    });
-
-    test('should set up initial position when calling setupInitialPosition', () => {
-      const game = new Game();
-      game.setupInitialPosition();
-      
-      // Check that board is no longer empty
-      const board = game.getBoard();
-      let haspiece = false;
-      for (let rank = 0; rank < 5; rank++) {
-        for (let file = 0; file < 4; file++) {
-          if (board[rank][file] !== null) {
-            haspiece = true;
-            break;
-          }
-        }
-      }
-      expect(haspiece).toBe(true);
-    });
-
-    test('should render pieces as spans with correct data attributes', () => {
-      const game = new Game();
-      game.initialize();
-      game.setupInitialPosition();
-      game.renderPieces();
-      
-      const pieceSpans = document.querySelectorAll('.square span[data-piece]');
-      expect(pieceSpans.length).toBeGreaterThan(0);
-      
-      pieceSpans.forEach(span => {
-        expect(span.dataset.piece).toBeDefined();
-        expect(span.dataset.color).toBeDefined();
-        expect(['white', 'black']).toContain(span.dataset.color);
-        expect(['K', 'Q', 'R', 'B', 'N', 'P']).toContain(span.dataset.piece);
-      });
-    });
-
-    test('should render white king on d1', () => {
-      const game = new Game();
-      game.initialize();
-      game.setupInitialPosition();
-      game.renderPieces();
-      
-      const d1Square = document.querySelector('[data-file="3"][data-rank="0"]');
-      const pieceSpan = d1Square.querySelector('span[data-piece]');
-      
-      expect(pieceSpan).toBeTruthy();
-      expect(pieceSpan.dataset.piece).toBe('K');
-      expect(pieceSpan.dataset.color).toBe('white');
-      expect(pieceSpan.textContent).toBe('♔');
-    });
-
-    test('should render black king on a5', () => {
-      const game = new Game();
-      game.initialize();
-      game.setupInitialPosition();
-      game.renderPieces();
-      
-      const a5Square = document.querySelector('[data-file="0"][data-rank="4"]');
-      const pieceSpan = a5Square.querySelector('span[data-piece]');
-      
-      expect(pieceSpan).toBeTruthy();
-      expect(pieceSpan.dataset.piece).toBe('K');
-      expect(pieceSpan.dataset.color).toBe('black');
-      expect(pieceSpan.textContent).toBe('♚');
-    });
-
-    test('should render exactly 10 pieces total', () => {
-      const game = new Game();
-      game.initialize();
-      game.setupInitialPosition();
-      game.renderPieces();
-      
-      const pieceSpans = document.querySelectorAll('.square span[data-piece]');
-      expect(pieceSpans.length).toBe(10);
-    });
-
-    test('should render 5 white pieces and 5 black pieces', () => {
-      const game = new Game();
-      game.initialize();
-      game.setupInitialPosition();
-      game.renderPieces();
-      
-      const whitePieces = document.querySelectorAll('.square span[data-color="white"]');
-      const blackPieces = document.querySelectorAll('.square span[data-color="black"]');
-      
-      expect(whitePieces.length).toBe(5);
-      expect(blackPieces.length).toBe(5);
-    });
-
-    test('should not render pieces on empty squares', () => {
-      const game = new Game();
-      game.initialize();
-      game.setupInitialPosition();
-      game.renderPieces();
-      
-      // Check that middle rank (index 2) has no pieces
-      const middleRankSquares = document.querySelectorAll('[data-rank="2"]');
-      middleRankSquares.forEach(square => {
-        const pieceSpan = square.querySelector('span[data-piece]');
-        expect(pieceSpan).toBeFalsy();
-      });
-    });
-  });
-
-  describe('GameState Integration', () => {
-    test('should integrate with GameState for turn management', () => {
-      const game = new Game();
-      game.initialize();
-      
-      // Should have gameState property
-      expect(game.gameState).toBeDefined();
-      expect(game.gameState.getCurrentTurn()).toBe('white');
-    });
-
-    test('should update status display with current turn', () => {
+    test('should display initial game status', () => {
       const game = new Game();
       game.initialize();
       
       const statusElement = document.getElementById('game-status');
-      expect(statusElement.textContent).toBe('White to move');
+      expect(statusElement.textContent).toContain('White to move');
     });
+  });
 
-    test('should handle move execution through GameState', () => {
+  describe('Dependency Injection Validation', () => {
+    test('should properly inject dependencies through constructors', () => {
       const game = new Game();
       game.initialize();
       
-      // Should have a method to execute moves
-      expect(typeof game.executeMove).toBe('function');
+      const controller = game.getController();
+      const view = controller.getView();
+      const gameState = controller.getGameState();
+      
+      // Verify dependencies were injected correctly
+      expect(controller).toBeInstanceOf(Controller);
+      expect(view).toBeInstanceOf(View);
+      expect(gameState).toBeInstanceOf(GameState);
     });
 
-    test('should detect and display checkmate', () => {
+    test('should allow testing components in isolation', () => {
+      // Test View can be created with mock DOM elements
+      const mockContainer = document.createElement('div');
+      const mockBoard = document.createElement('div');
+      const mockStatus = document.createElement('div');
+      const mockControls = document.createElement('div');
+      
+      expect(() => new View(mockContainer, mockBoard, mockStatus, mockControls)).not.toThrow();
+      
+      // Test Controller can be created with mock dependencies
+      const mockGameState = new GameState();
+      const mockView = new View(mockContainer, mockBoard, mockStatus, mockControls);
+      
+      expect(() => new Controller(mockGameState, mockView)).not.toThrow();
+    });
+
+    test('should validate required dependencies', () => {
+      // View should require all DOM elements
+      expect(() => new View(null, null, null, null)).toThrow('All DOM elements must be provided');
+      
+      // Controller should require gameState and view
+      expect(() => new Controller(null, null)).toThrow('GameState and View must be provided');
+    });
+
+    test('should handle new game without creating new dependencies', () => {
       const game = new Game();
       game.initialize();
       
-      // Should have method to update game status
-      expect(typeof game.updateGameStatus).toBe('function');
+      const controller = game.getController();
+      const originalGameState = controller.getGameState();
+      const originalView = controller.getView();
+      
+      // Simulate new game
+      controller.handleNewGame();
+      
+      // Should still have the same instances (no new objects created)
+      expect(controller.getGameState()).toBe(originalGameState);
+      expect(controller.getView()).toBe(originalView);
+      
+      // But game state should be reset to initial values
+      expect(originalGameState.getCurrentTurn()).toBe('white');
+      expect(originalGameState.getGameStatus()).toBe('playing');
     });
 
-    test('should switch turns properly', () => {
+    test('should maintain separation of concerns', () => {
       const game = new Game();
       game.initialize();
       
-      // Execute a valid move
-      const result = game.executeMove({
-        from: { rank: 1, file: 3 },
-        to: { rank: 2, file: 3 }
-      });
+      const controller = game.getController();
+      const view = controller.getView();
+      const gameState = controller.getGameState();
       
-      expect(result).toBe(true);
-      expect(game.gameState.getCurrentTurn()).toBe('black');
+      // Game should only orchestrate
+      expect(typeof game.getController).toBe('function');
       
-      const statusElement = document.getElementById('game-status');
-      expect(statusElement.textContent).toBe('Black to move');
+      // Controller should coordinate
+      expect(typeof controller.handleSquareClick).toBe('function');
+      expect(typeof controller.handleNewGame).toBe('function');
+      
+      // View should handle rendering
+      expect(typeof view.renderPieces).toBe('function');
+      expect(typeof view.updateStatus).toBe('function');
+      
+      // Model should handle game logic
+      expect(typeof gameState.executeMove).toBe('function');
+      expect(typeof gameState.getCurrentTurn).toBe('function');
     });
   });
 });

@@ -71,10 +71,18 @@ export class GameState {
     }
 
     /**
-     * Execute a move
+     * Execute a move (supports both old and new format)
      */
     executeMove(move) {
-        const { from, to } = move;
+        // Handle both {from, to} and {fromRank, fromFile, toRank, toFile} formats
+        let from, to;
+        if (move.from && move.to) {
+            from = move.from;
+            to = move.to;
+        } else {
+            from = { rank: move.fromRank, file: move.fromFile };
+            to = { rank: move.toRank, file: move.toFile };
+        }
         
         // Check if there's a piece at the source
         const piece = this.getPieceAt(from.rank, from.file);
@@ -254,5 +262,54 @@ export class GameState {
         this.currentTurn = this.currentTurn === 'white' ? 'black' : 'white';
 
         return true;
+    }
+
+    /**
+     * Get valid moves for a piece at a specific position
+     */
+    getValidMovesForPiece(rank, file) {
+        const piece = this.getPieceAt(rank, file);
+        if (!piece || piece.color !== this.currentTurn) {
+            return [];
+        }
+
+        const possibleMoves = getPossibleMoves(this.board, { rank, file }, piece.piece, piece.color);
+        const validMoves = [];
+
+        // Filter out moves that would leave the king in check
+        for (const move of possibleMoves) {
+            const tempBoard = this.copyBoard(this.board);
+            tempBoard[move.rank][move.file] = tempBoard[rank][file];
+            tempBoard[rank][file] = null;
+            
+            const tempGameState = new GameState(tempBoard);
+            if (!tempGameState.isKingInCheck(this.currentTurn)) {
+                validMoves.push({
+                    fromRank: rank,
+                    fromFile: file,
+                    toRank: move.rank,
+                    toFile: move.file
+                });
+            }
+        }
+
+        return validMoves;
+    }
+
+    /**
+     * Resign the game
+     */
+    resign() {
+        this.gameStatus = 'resigned';
+    }
+
+    /**
+     * Reset the game to initial state
+     */
+    reset() {
+        this.board = this.copyBoard(INITIAL_POSITION);
+        this.currentTurn = 'white';
+        this.gameStatus = 'playing';
+        this.moveHistory = [];
     }
 }
