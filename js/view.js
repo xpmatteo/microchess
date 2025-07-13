@@ -14,6 +14,7 @@ export class View {
         this.statusElement = statusElement;
         this.controlsElement = controlsElement;
         this.clickHandler = null;
+        this.buttonHandlers = null;
     }
 
     /**
@@ -22,6 +23,7 @@ export class View {
     initialize() {
         this.renderBoard();
         this.setupControls();
+        this.attachButtonHandlers(); // Attach button handlers after controls are created
     }
 
     /**
@@ -73,7 +75,11 @@ export class View {
                 // Add click handler
                 square.addEventListener('click', (e) => {
                     if (this.clickHandler) {
-                        this.clickHandler(parseInt(e.target.dataset.rank), parseInt(e.target.dataset.file));
+                        // Find the square element (in case user clicked on a piece span)
+                        const squareElement = e.target.closest('.square');
+                        if (squareElement) {
+                            this.clickHandler(parseInt(squareElement.dataset.rank), parseInt(squareElement.dataset.file));
+                        }
                     }
                 });
                 
@@ -115,21 +121,30 @@ export class View {
     }
 
     /**
-     * Set button event handlers
+     * Set button event handlers (store for later attachment)
      */
     setButtonHandlers(handlers) {
+        this.buttonHandlers = handlers;
+    }
+
+    /**
+     * Attach button event handlers (called after buttons are created)
+     */
+    attachButtonHandlers() {
+        if (!this.buttonHandlers) return;
+
         const newGameBtn = document.getElementById('new-game-btn');
         const resignBtn = document.getElementById('resign-btn');
         const hintBtn = document.getElementById('hint-btn');
 
-        if (newGameBtn && handlers.newGame) {
-            newGameBtn.addEventListener('click', handlers.newGame);
+        if (newGameBtn && this.buttonHandlers.newGame) {
+            newGameBtn.addEventListener('click', this.buttonHandlers.newGame);
         }
-        if (resignBtn && handlers.resign) {
-            resignBtn.addEventListener('click', handlers.resign);
+        if (resignBtn && this.buttonHandlers.resign) {
+            resignBtn.addEventListener('click', this.buttonHandlers.resign);
         }
-        if (hintBtn && handlers.hint) {
-            hintBtn.addEventListener('click', handlers.hint);
+        if (hintBtn && this.buttonHandlers.hint) {
+            hintBtn.addEventListener('click', this.buttonHandlers.hint);
         }
     }
 

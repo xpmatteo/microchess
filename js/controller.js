@@ -16,16 +16,16 @@ export class Controller {
      * Initialize the controller event handlers and initial rendering
      */
     initialize() {
-        // Initialize the view
-        this.view.initialize();
-        
-        // Set up event handlers
+        // Set up event handlers BEFORE initializing the view
         this.view.setClickHandler((rank, file) => this.handleSquareClick(rank, file));
         this.view.setButtonHandlers({
             newGame: () => this.handleNewGame(),
             resign: () => this.handleResign(),
             hint: () => this.handleHint()
         });
+        
+        // Initialize the view
+        this.view.initialize();
 
         // Initial render
         this.updateView();

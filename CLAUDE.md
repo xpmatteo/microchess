@@ -8,24 +8,40 @@ This is a microchess implementation project - a web-based chess variant played o
 
 ## Architecture
 
+### Mandatory Architectural Principles
+- **ALWAYS use Model-View-Controller (MVC) architecture** - No exceptions
+- **ALWAYS use constructor dependency injection** - Components must receive dependencies through constructors, never create their own
+- **NEVER allow components to create their own dependencies** - Use dependency injection containers/factories
+- **MAINTAIN strict separation of concerns** - Model handles business logic, View handles DOM/rendering, Controller coordinates between them
+
 ### Technology Stack
 - Pure HTML/CSS/JavaScript (vanilla JS, no frameworks)
 - ES6+ modules for code organization
-- Model-View-Controller (MVC) architecture
+- Model-View-Controller (MVC) architecture with dependency injection
 
-### Planned File Structure
+### Current File Structure (MVC with Dependency Injection)
 ```
 index.html
 style.css
 js/
-  ├── game.js          (Game model - game state, rules, move validation)
-  ├── ai.js            (AI logic - minimax algorithm, evaluation)
-  ├── ui.js            (View - DOM manipulation, user interaction)
-  ├── controller.js    (Controller - coordinates model and view)
-  ├── moves.js         (Move validation engine)
-  ├── gameState.js     (Game state management)
-  ├── pieces.js        (Piece definitions and symbols)
-  └── storage.js       (LocalStorage handling)
+  ├── game.js          (DI Container - creates and injects all dependencies)
+  ├── controller.js    (Controller - coordinates model and view via DI)
+  ├── view.js          (View - DOM manipulation, receives DOM elements via DI)
+  ├── gameState.js     (Model - game state, rules, move validation)
+  ├── moves.js         (Model - move validation engine)
+  ├── pieces.js        (Model - piece definitions and symbols)
+  └── storage.js       (Model - LocalStorage handling)
+```
+
+### Dependency Injection Pattern
+```
+Game (DI Container)
+├── Creates: DOM elements, GameState, View
+├── Injects: GameState + View → Controller
+└── Controller (Pure)
+    ├── Receives: GameState, View (no creation)
+    ├── Coordinates: User events ↔ Model/View
+    └── Resets: gameState.reset() (no new instances)
 ```
 
 ## Key Implementation Details
@@ -88,24 +104,53 @@ Each step should be implemented incrementally with testing before proceeding to 
 
 ## Code Style Requirements
 
+### MVC and Dependency Injection (MANDATORY)
+- **ALL components MUST use constructor dependency injection** - No exceptions
+- **View components MUST receive DOM elements through constructor** - Never use document.getElementById inside components
+- **Controller components MUST receive model and view through constructor** - No component creation allowed
+- **Model components MUST be pure** - No DOM access, no component creation
+- **Only the DI container (Game class) may create dependencies** - All other components are consumers only
+
+### General Requirements
 - Use ES6+ modules with clear imports/exports
-- Maintain MVC separation of concerns
-- Include comprehensive error handling
+- Maintain strict MVC separation of concerns
+- Include comprehensive error handling and dependency validation
 - Use descriptive variable and function names
 - Add unit tests for core game logic (move validation, AI evaluation)
 - Follow the existing code style if any modules are already implemented
 
 ## Testing Strategy
 
+### Unit Testing (with Dependency Injection)
 - Unit tests for move validation engine
 - Position-specific tests for checkmate/stalemate detection
 - AI behavior verification with known positions
+- **Dependency injection testing** - Verify components can be created with mock dependencies
+- **Isolation testing** - Test each MVC component independently
+- **Constructor validation testing** - Ensure proper dependency validation
+
+### Integration Testing
 - Cross-browser compatibility testing
 - Mobile device responsive testing
 - Performance benchmarking for AI search depth
+- **End-to-end testing with Playwright** - Browser automation for user interaction testing
 
 ## Key Files to Review
 
 - `spec.md`: Complete technical specification with all requirements
 - `plan.md`: Detailed 15-step implementation plan with specific prompts
 - `todo.md`: Current project status and task checklist
+
+## Session Learnings
+
+### MVC Refactoring with Dependency Injection (2025-07-13)
+- **Successfully refactored monolithic Game class into proper MVC architecture**
+- **Implemented pure constructor dependency injection pattern** - No components create their own dependencies
+- **Created View class** - Handles all DOM manipulation, receives DOM elements via constructor
+- **Created Controller class** - Coordinates model/view interactions, receives dependencies via constructor  
+- **Refactored Game class** - Now acts as dependency injection container, creates and injects all dependencies
+- **Added GameState.reset() method** - Avoids creating new instances for new games
+- **Added comprehensive testing** - Unit tests validate dependency injection, isolation testing with mocks
+- **Key insight**: Constructor dependency injection makes components highly testable and eliminates hidden coupling
+- **Added Playwright for end-to-end testing** - Browser automation to test actual user interactions
+- **Architectural principle established**: ALWAYS use MVC + dependency injection, NO exceptions

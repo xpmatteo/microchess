@@ -228,6 +228,11 @@ export class GameState {
      * Update game status based on current position
      */
     updateGameStatus() {
+        // Don't override resigned status
+        if (this.gameStatus === 'resigned') {
+            return;
+        }
+        
         if (this.isCheckmate(this.currentTurn)) {
             this.gameStatus = 'checkmate';
         } else if (this.isStalemate(this.currentTurn)) {
