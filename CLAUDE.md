@@ -60,11 +60,19 @@ js/
 
 ## Development Commands
 
-Since this is a vanilla JavaScript project with no build system:
+The project uses a Makefile with shoreman process management for development:
 
-- **Development**: Open `index.html` in a modern browser
-- **Testing**: Manual testing through browser console and gameplay
+- **Development server**: `make dev` - Starts HTTP server with file logging via shoreman
+- **Testing**: `make test` - Runs Jest test suite 
+- **View logs**: `make tail-log` - Shows recent development logs from dev.log file
+- **Manual testing**: Open http://localhost:8000 in browser after running `make dev`
 - **Debugging**: Use browser DevTools
+
+### Process Management
+- Uses shoreman (Procfile-based process manager) for `python3 -m http.server 8000`
+- All output is logged to `dev.log` with timestamps and process identification
+- Advantage: Persistent logging for debugging server issues and tracking requests
+- Server accessible at http://localhost:8000
 
 ## Implementation Approach
 
