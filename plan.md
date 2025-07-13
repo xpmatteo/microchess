@@ -2,20 +2,22 @@
 
 ## High-Level Blueprint
 
-### Phase 1: Foundation
-1. Project setup with HTML/CSS skeleton
-2. Board representation and rendering
-3. Basic piece placement
+**ARCHITECTURE NOTE**: This implementation uses Model-View-Controller (MVC) pattern with constructor dependency injection throughout. This provides better separation of concerns, testability, and maintainability than the original procedural approach.
 
-### Phase 2: Game Logic
-4. Move validation system
-5. Game state management
-6. Turn management
+### Phase 1: Foundation (✅ Complete)
+1. Project setup with HTML/CSS skeleton and MVC structure
+2. Board representation and rendering with View layer
+3. Basic piece placement with GameState model
 
-### Phase 3: User Interaction
-7. Piece selection and movement
-8. Visual feedback system
-9. Game status display
+### Phase 2: Game Logic (✅ Complete)
+4. Move validation system with dedicated moves module
+5. Game state management with proper state encapsulation
+6. Turn management with controller coordination
+
+### Phase 3: User Interaction (✅ Complete)
+7. Click handling with MVC event flow
+8. Enhanced visual feedback system with multiple highlights
+9. Game status display with controller/view separation
 
 ### Phase 4: AI Implementation
 10. Basic AI with evaluation
@@ -24,8 +26,41 @@
 
 ### Phase 5: Polish
 13. Local storage
-14. Game controls
-15. Final integration
+14. Pawn promotion and polish features
+15. Final integration and testing
+
+## Architecture Pattern
+
+### MVC with Dependency Injection
+
+The implemented architecture follows strict MVC separation with constructor dependency injection:
+
+**Model Layer (Business Logic)**:
+- `gameState.js` - Core game state, move execution, check detection
+- `moves.js` - Move validation engine
+- `pieces.js` - Piece definitions and constants
+- `storage.js` - Data persistence (localStorage)
+
+**View Layer (DOM/UI)**:
+- `view.js` - All DOM manipulation, rendering, visual feedback
+- Receives DOM elements via constructor (no document.getElementById inside components)
+- Methods: renderBoard(), renderPieces(), showLastMove(), showCheckWarning()
+
+**Controller Layer (Coordination)**:
+- `controller.js` - Coordinates between model and view
+- Handles user events, orchestrates updates
+- Receives GameState and View via constructor (pure dependency injection)
+
+**Dependency Injection Container**:
+- `game.js` - Creates and injects all dependencies
+- Only component allowed to use document.getElementById()
+- Wires together the entire application
+
+**Key Principles**:
+1. **Constructor Dependency Injection** - All components receive dependencies via constructor
+2. **No Hidden Dependencies** - Components never create their own dependencies
+3. **Testable Architecture** - Each layer can be unit tested in isolation
+4. **Strict Separation** - Model never touches DOM, View never contains business logic
 
 ## Detailed Breakdown
 
@@ -251,81 +286,85 @@ Update Game class:
 Test checkmate and stalemate detection with specific positions.
 ```
 
-### Prompt 7: User Interaction
+### Prompt 7: User Interaction (MVC Implementation)
 ```text
-Implement user interaction for moving pieces.
+Implement user interaction using MVC pattern with dependency injection.
 
-Create js/ui.js module with UI class:
-1. Properties:
-   - selectedSquare: Currently selected square
-   - validMoves: Array of valid moves for selected piece
-2. Methods:
-   - handleSquareClick(file, rank): Process user clicks
-   - selectPiece(file, rank): Select a piece and calculate valid moves
-   - clearSelection(): Clear current selection
-   - movePiece(from, to): Request move execution
+Refactor Game class into MVC architecture:
+1. Create js/controller.js with Controller class:
+   - Constructor receives GameState and View dependencies
+   - Properties: selectedSquare, manages user interaction state
+   - Methods: handleSquareClick(), trySelectSquare(), tryMakeMove()
+   - Coordinates between model (GameState) and view (View)
 
-Integrate with Game class:
-1. Create UI instance and wire click handlers
-2. Add visual feedback methods:
-   - highlightSquare(file, rank, className)
-   - clearHighlights()
-3. Update renderBoard() to add click event listeners
+2. Create js/view.js with View class:
+   - Constructor receives DOM elements (no document.getElementById inside)
+   - Methods: renderBoard(), renderPieces(), setClickHandler()
+   - All DOM manipulation and visual feedback
 
-Test piece selection and movement.
+3. Refactor js/game.js as Dependency Injection Container:
+   - Creates GameState, View with DOM elements, Controller
+   - Injects dependencies: Controller(gameState, view)
+   - Only class allowed to query DOM directly
+
+Test piece selection and movement with proper MVC separation.
 ```
 
-### Prompt 8: Visual Feedback System
+### Prompt 8: Enhanced Visual Feedback System
 ```text
-Enhance the game with comprehensive visual feedback.
+Implement comprehensive visual feedback with multiple highlight types.
 
-Extend UI class to show:
-1. Selected piece highlighting (.selected class with border)
-2. Valid move indicators (.valid-move class with dots)
-3. Last move highlighting (.last-move-from, .last-move-to)
-4. Check indication (.in-check class on king's square)
+Add CSS classes and animations:
+1. .selected: Orange background with glow for selected pieces
+2. .valid-move: Green background with glow for valid moves
+3. .last-move: Yellow background for from/to squares of last move
+4. .in-check: Red background with animation for king in check
 
-Add CSS:
-- .selected: 3px solid yellow border
-- .valid-move::after: centered dot indicator
-- .last-move-from/to: rgba highlight
-- .in-check: red background
+Extend GameState with visual feedback methods:
+1. getLastMove(): Returns last move for highlighting
+2. getKingInCheck(): Returns king position if current player in check
 
-Update move execution to:
-1. Clear previous highlights
-2. Show last move
-3. Check for check condition
-4. Update visual indicators
+Extend View class with feedback methods:
+1. showLastMove(fromRank, fromFile, toRank, toFile)
+2. showCheckWarning(kingRank, kingFile)
+3. clearHighlights(): Removes all highlight classes
 
-Test all visual feedback states.
+Update Controller.updateView() to:
+1. Show last move highlighting
+2. Show check warnings
+3. Maintain selected piece and valid moves
+4. Coordinate all visual feedback
+
+Test all visual feedback states and ensure proper layering.
 ```
 
-### Prompt 9: Game Status Display
+### Prompt 9: Game Status and Controls (MVC Implementation)
 ```text
-Add game status and control UI elements.
+Implement game status display and controls using MVC pattern.
 
-Create UI components:
-1. Status bar showing:
-   - Current turn ("White to move" / "Black to move")
-   - Game status (Check, Checkmate, Stalemate)
-   - Match info (Human vs AI)
-2. Control buttons:
-   - New Game
-   - Resign
-   - Hint (disabled during AI turn)
+Extend View class with control methods:
+1. setupControls(): Create New Game, Resign, Hint buttons
+2. setButtonHandlers(): Accept handler functions from controller
+3. updateStatus(statusText): Update status display
+4. setControlsEnabled(enabled): Enable/disable buttons appropriately
 
-Update Game class:
-1. Add updateStatus() method
-2. Add handleNewGame() method
-3. Add handleResign() method
-4. Wire button event handlers
+Extend Controller class with control handlers:
+1. handleNewGame(): Reset game state, update view, enable controls
+2. handleResign(): Set game status to resigned, disable controls
+3. handleHint(): Display hint message (placeholder for AI implementation)
+4. updateStatus(): Generate status text based on game state
 
-Style with CSS:
-- Status bar above board
-- Buttons below board
-- Disabled state styling
+Update Controller.updateView() method:
+1. Generate appropriate status messages
+2. Handle different game states (playing, check, checkmate, stalemate, resigned)
+3. Update status display via view
 
-Test status updates and button functionality.
+Ensure proper MVC separation:
+- View handles DOM manipulation and styling
+- Controller handles business logic and state management
+- Clear separation of concerns
+
+Test all control functionality and status displays.
 ```
 
 ### Prompt 10: Basic AI Evaluation
@@ -477,6 +516,44 @@ Create a simple test harness to verify core functionality.
 Document any known limitations.
 ```
 
+## Implementation Status
+
+### Completed Phases (✅)
+- **Phase 1**: Foundation with MVC architecture established
+- **Phase 2**: Complete game logic with comprehensive testing (86 unit tests)
+- **Phase 3**: Full user interaction with enhanced visual feedback
+
+### Current State
+- Fully playable human vs human microchess game
+- Complete visual feedback system (selected pieces, valid moves, last move, check warnings)
+- Game status tracking and control buttons
+- Comprehensive test suite (86 unit tests + 13 e2e tests)
+- Clean MVC architecture with dependency injection
+
+### Next Steps
+- Phase 4: AI Implementation (Steps 10-12)
+- Phase 5: Final polish features
+
+## Key Learnings
+
+### Architecture Improvements
+1. **MVC with Dependency Injection** proved superior to original procedural design
+2. **Constructor injection** makes components highly testable
+3. **Strict separation** prevents tightly coupled code
+4. **View abstraction** enables easy testing without DOM
+
+### Testing Strategy
+1. **Unit tests** for all business logic (moves, game state, pieces)
+2. **Integration tests** for dependency injection
+3. **End-to-end tests** for user interactions
+4. **TDD approach** caught edge cases early
+
+### Visual Feedback Enhancements
+1. **Multiple highlight types** (selected, valid moves, last move, check)
+2. **CSS animations** improve user experience
+3. **Layered feedback** shows multiple states simultaneously
+4. **Consistent color coding** (orange=selected, green=valid, yellow=last, red=check)
+
 ## Notes
 
 - Each prompt builds on previous work
@@ -486,3 +563,5 @@ Document any known limitations.
 - Early user interaction (Step 7) to enable manual testing
 - AI comes after core game works
 - Polish and persistence at the end
+- **MVC architecture** enables independent testing of each layer
+- **Dependency injection** makes the codebase highly maintainable
