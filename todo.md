@@ -57,12 +57,12 @@
   - [x] Handle move execution
   - [x] Test interaction
 
-- [ ] Step 8: Visual Feedback (Prompt 8)
-  - [ ] Highlight selected piece
-  - [ ] Show valid moves
-  - [ ] Highlight last move
-  - [ ] Show check warning
-  - [ ] Test all feedback
+- [x] Step 8: Visual Feedback (Prompt 8)
+  - [x] Highlight selected piece
+  - [x] Show valid moves
+  - [x] Highlight last move
+  - [x] Show check warning
+  - [x] Test all feedback
 
 - [ ] Step 9: Game Status (Prompt 9)
   - [ ] Add status display

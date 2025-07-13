@@ -197,9 +197,9 @@ export class View {
      * Remove all highlights from the board
      */
     clearHighlights() {
-        const highlightedSquares = document.querySelectorAll('.square.highlighted, .square.valid-move, .square.selected');
+        const highlightedSquares = document.querySelectorAll('.square.highlighted, .square.valid-move, .square.selected, .square.last-move, .square.in-check');
         highlightedSquares.forEach(square => {
-            square.classList.remove('highlighted', 'valid-move', 'selected');
+            square.classList.remove('highlighted', 'valid-move', 'selected', 'last-move', 'in-check');
         });
     }
 
@@ -217,6 +217,21 @@ export class View {
      */
     showSelectedPiece(rank, file) {
         this.highlightSquare(rank, file, 'selected');
+    }
+
+    /**
+     * Highlight the last move made
+     */
+    showLastMove(fromRank, fromFile, toRank, toFile) {
+        this.highlightSquare(fromRank, fromFile, 'last-move');
+        this.highlightSquare(toRank, toFile, 'last-move');
+    }
+
+    /**
+     * Highlight king when in check
+     */
+    showCheckWarning(kingRank, kingFile) {
+        this.highlightSquare(kingRank, kingFile, 'in-check');
     }
 
     /**

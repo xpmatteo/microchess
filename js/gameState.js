@@ -318,4 +318,24 @@ export class GameState {
         this.gameStatus = GAME_STATUS.PLAYING;
         this.moveHistory = [];
     }
+
+    /**
+     * Get the last move made (for visual feedback)
+     */
+    getLastMove() {
+        if (this.moveHistory.length === 0) {
+            return null;
+        }
+        return this.moveHistory[this.moveHistory.length - 1];
+    }
+
+    /**
+     * Get king position if current player is in check (for visual feedback)
+     */
+    getKingInCheck() {
+        if (this.isKingInCheck(this.currentTurn)) {
+            return this.findKingPosition(this.currentTurn);
+        }
+        return null;
+    }
 }

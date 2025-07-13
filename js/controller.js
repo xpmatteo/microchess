@@ -144,6 +144,28 @@ export class Controller {
      * Update the view based on current game state
      */
     updateView() {
+        // Clear existing highlights (except selected piece and valid moves)
+        this.view.clearHighlights();
+        
+        // Re-show selected piece if any
+        if (this.selectedSquare) {
+            this.view.showSelectedPiece(this.selectedSquare.rank, this.selectedSquare.file);
+            const validMoves = this.gameState.getValidMovesForPiece(this.selectedSquare.rank, this.selectedSquare.file);
+            this.view.showValidMoves(validMoves);
+        }
+        
+        // Show last move
+        const lastMove = this.gameState.getLastMove();
+        if (lastMove) {
+            this.view.showLastMove(lastMove.from.rank, lastMove.from.file, lastMove.to.rank, lastMove.to.file);
+        }
+        
+        // Show check warning
+        const kingInCheck = this.gameState.getKingInCheck();
+        if (kingInCheck) {
+            this.view.showCheckWarning(kingInCheck.rank, kingInCheck.file);
+        }
+        
         // Update board display
         this.view.renderPieces(this.gameState.getBoard());
         

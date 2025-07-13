@@ -118,6 +118,7 @@ Each step should be implemented incrementally with testing before proceeding to 
 - Use descriptive variable and function names
 - Add unit tests for core game logic (move validation, AI evaluation)
 - Follow the existing code style if any modules are already implemented
+- **Always use named constants instead of magic strings or magic numbers**
 
 ## Testing Strategy
 
@@ -139,7 +140,6 @@ Each step should be implemented incrementally with testing before proceeding to 
 
 - `spec.md`: Complete technical specification with all requirements
 - `plan.md`: Detailed 15-step implementation plan with specific prompts
-- `todo.md`: Current project status and task checklist
 
 ## Session Learnings
 

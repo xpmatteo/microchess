@@ -258,4 +258,60 @@ describe('GameState Module', () => {
       expect(gameState.getPieceAt(2, 2)).toEqual(piece);
     });
   });
+
+  describe('Visual Feedback Methods', () => {
+    test('should return last move after making a move', () => {
+      const gameState = new GameState();
+      
+      // Initially no last move
+      expect(gameState.getLastMove()).toBe(null);
+      
+      // Make a move
+      const move = {
+        from: { rank: 1, file: 3 },
+        to: { rank: 2, file: 3 }
+      };
+      gameState.executeMove(move);
+      
+      // Should return the last move
+      const lastMove = gameState.getLastMove();
+      expect(lastMove).toBeDefined();
+      expect(lastMove.from).toEqual(move.from);
+      expect(lastMove.to).toEqual(move.to);
+      expect(lastMove.piece).toEqual({ piece: 'P', color: 'white' });
+      expect(lastMove.capturedPiece).toBe(null);
+    });
+
+    test('should return null when king is not in check', () => {
+      const gameState = new GameState();
+      
+      // Initial position - no king in check
+      expect(gameState.getKingInCheck()).toBe(null);
+    });
+
+    test('should return king position when in check', () => {
+      const board = createTestBoard();
+      // Place white king and black rook attacking it
+      board[2][2] = { piece: 'K', color: 'white' };
+      board[2][0] = { piece: 'R', color: 'black' };
+      
+      const gameState = new GameState(board);
+      gameState.setCurrentTurn('white');
+      
+      const kingInCheck = gameState.getKingInCheck();
+      expect(kingInCheck).toEqual({ rank: 2, file: 2 });
+    });
+
+    test('should return null when opponent king is in check but not current player', () => {
+      const board = createTestBoard();
+      // Place black king and white rook attacking it
+      board[2][2] = { piece: 'K', color: 'black' };
+      board[2][0] = { piece: 'R', color: 'white' };
+      
+      const gameState = new GameState(board);
+      gameState.setCurrentTurn('white'); // White's turn, but black king in check
+      
+      expect(gameState.getKingInCheck()).toBe(null);
+    });
+  });
 });

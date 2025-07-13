@@ -115,6 +115,23 @@ h1 {
     box-shadow: 0 0 8px rgba(230, 126, 34, 0.6);
 }
 
+.square.last-move {
+    background-color: #f1c40f !important;
+    box-shadow: 0 0 8px rgba(241, 196, 15, 0.6);
+}
+
+.square.in-check {
+    background-color: #e74c3c !important;
+    box-shadow: 0 0 10px rgba(231, 76, 60, 0.8);
+    animation: check-warning 0.5s ease-in-out;
+}
+
+@keyframes check-warning {
+    0% { background-color: #e74c3c; }
+    50% { background-color: #c0392b; }
+    100% { background-color: #e74c3c; }
+}
+
 .file-labels {
     display: flex;
     margin-top: 5px;
