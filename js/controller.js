@@ -1,6 +1,8 @@
 // ABOUTME: Controller class that handles user interactions and coordinates between model and view
 // ABOUTME: Manages game flow, user input events, and orchestrates updates between GameState and View
 
+import { GAME_STATUS, COLORS, DISPLAY_NAMES } from './constants.js';
+
 export class Controller {
     constructor(gameState, view) {
         if (!gameState || !view) {
@@ -96,7 +98,7 @@ export class Controller {
             
             // Check if game is over
             const gameStatus = this.gameState.getGameStatus();
-            if (gameStatus === 'checkmate' || gameStatus === 'stalemate') {
+            if (gameStatus === GAME_STATUS.CHECKMATE || gameStatus === GAME_STATUS.STALEMATE) {
                 this.view.setControlsEnabled(false);
             }
         } else {
@@ -157,15 +159,15 @@ export class Controller {
         const gameStatus = this.gameState.getGameStatus();
         
         let statusText;
-        if (gameStatus === 'checkmate') {
-            const winner = currentTurn === 'white' ? 'Black' : 'White';
+        if (gameStatus === GAME_STATUS.CHECKMATE) {
+            const winner = currentTurn === COLORS.WHITE ? DISPLAY_NAMES.BLACK : DISPLAY_NAMES.WHITE;
             statusText = `Checkmate! ${winner} wins!`;
-        } else if (gameStatus === 'stalemate') {
+        } else if (gameStatus === GAME_STATUS.STALEMATE) {
             statusText = 'Stalemate! Draw!';
-        } else if (gameStatus === 'resigned') {
+        } else if (gameStatus === GAME_STATUS.RESIGNED) {
             statusText = 'Game resigned';
         } else {
-            const turnText = currentTurn === 'white' ? 'White' : 'Black';
+            const turnText = currentTurn === COLORS.WHITE ? DISPLAY_NAMES.WHITE : DISPLAY_NAMES.BLACK;
             statusText = `${turnText} to move`;
         }
         

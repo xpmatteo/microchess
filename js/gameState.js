@@ -3,12 +3,13 @@
 
 import { INITIAL_POSITION } from './pieces.js';
 import { isValidMove, getPossibleMoves } from './moves.js';
+import { GAME_STATUS, COLORS } from './constants.js';
 
 export class GameState {
     constructor(board = null) {
         this.board = board ? this.copyBoard(board) : this.copyBoard(INITIAL_POSITION);
-        this.currentTurn = 'white';
-        this.gameStatus = 'playing'; // 'playing', 'checkmate', 'stalemate', 'resigned'
+        this.currentTurn = COLORS.WHITE;
+        this.gameStatus = GAME_STATUS.PLAYING;
         this.moveHistory = [];
     }
 
@@ -125,7 +126,7 @@ export class GameState {
         });
 
         // Switch turns
-        this.currentTurn = this.currentTurn === 'white' ? 'black' : 'white';
+        this.currentTurn = this.currentTurn === COLORS.WHITE ? COLORS.BLACK : COLORS.WHITE;
 
         return true;
     }
@@ -139,7 +140,7 @@ export class GameState {
             return false;
         }
 
-        const oppositeColor = color === 'white' ? 'black' : 'white';
+        const oppositeColor = color === COLORS.WHITE ? COLORS.BLACK : COLORS.WHITE;
 
         // Check if any opponent piece can attack the king
         for (let rank = 0; rank < 5; rank++) {
@@ -229,16 +230,16 @@ export class GameState {
      */
     updateGameStatus() {
         // Don't override resigned status
-        if (this.gameStatus === 'resigned') {
+        if (this.gameStatus === GAME_STATUS.RESIGNED) {
             return;
         }
         
         if (this.isCheckmate(this.currentTurn)) {
-            this.gameStatus = 'checkmate';
+            this.gameStatus = GAME_STATUS.CHECKMATE;
         } else if (this.isStalemate(this.currentTurn)) {
-            this.gameStatus = 'stalemate';
+            this.gameStatus = GAME_STATUS.STALEMATE;
         } else {
-            this.gameStatus = 'playing';
+            this.gameStatus = GAME_STATUS.PLAYING;
         }
     }
 
@@ -264,7 +265,7 @@ export class GameState {
         this.board[lastMove.to.rank][lastMove.to.file] = lastMove.capturedPiece;
 
         // Switch turns back
-        this.currentTurn = this.currentTurn === 'white' ? 'black' : 'white';
+        this.currentTurn = this.currentTurn === COLORS.WHITE ? COLORS.BLACK : COLORS.WHITE;
 
         return true;
     }
@@ -305,7 +306,7 @@ export class GameState {
      * Resign the game
      */
     resign() {
-        this.gameStatus = 'resigned';
+        this.gameStatus = GAME_STATUS.RESIGNED;
     }
 
     /**
@@ -313,8 +314,8 @@ export class GameState {
      */
     reset() {
         this.board = this.copyBoard(INITIAL_POSITION);
-        this.currentTurn = 'white';
-        this.gameStatus = 'playing';
+        this.currentTurn = COLORS.WHITE;
+        this.gameStatus = GAME_STATUS.PLAYING;
         this.moveHistory = [];
     }
 }
