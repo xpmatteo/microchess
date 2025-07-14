@@ -165,3 +165,11 @@ Each step should be implemented incrementally with testing before proceeding to 
 - **Controller error handling** - Added try-catch blocks in controller to handle validation errors gracefully
 - **Comprehensive test coverage** - Added 17 new unit tests covering all error scenarios
 - **Key improvement**: Methods now throw descriptive errors instead of silently returning null/empty arrays for invalid input
+
+## Controller Architecture Refactoring (2025-07-14)
+- **Eliminated code duplication** - Created updatePieceSelection() method to consolidate repeated selection logic
+- **Improved View separation** - Added view.updateDisplay() method to batch all view updates atomically
+- **Reduced controller-view coupling** - Controller now passes consolidated state instead of making multiple view calls
+- **Enhanced performance** - Eliminated redundant clearHighlights() followed by re-highlighting patterns
+- **Better MVC adherence** - Controller coordinates but doesn't micromanage view's internal operations
+- **Key improvement**: Single atomic display update instead of multiple DOM manipulations

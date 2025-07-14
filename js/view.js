@@ -251,6 +251,48 @@ export class View {
     }
 
     /**
+     * Update entire display with consolidated state
+     * @param {Object} displayState - Object containing all display information
+     */
+    updateDisplay(displayState) {
+        // Clear all highlights first
+        this.clearHighlights();
+        
+        // Update pieces
+        if (displayState.board) {
+            this.renderPieces(displayState.board);
+        }
+        
+        // Show selected piece and its valid moves
+        if (displayState.selectedPiece) {
+            this.showSelectedPiece(displayState.selectedPiece.rank, displayState.selectedPiece.file);
+            if (displayState.selectedPiece.validMoves) {
+                this.showValidMoves(displayState.selectedPiece.validMoves);
+            }
+        }
+        
+        // Show last move
+        if (displayState.lastMove) {
+            this.showLastMove(
+                displayState.lastMove.from.rank,
+                displayState.lastMove.from.file,
+                displayState.lastMove.to.rank,
+                displayState.lastMove.to.file
+            );
+        }
+        
+        // Show check warning
+        if (displayState.kingInCheck) {
+            this.showCheckWarning(displayState.kingInCheck.rank, displayState.kingInCheck.file);
+        }
+        
+        // Update status
+        if (displayState.statusText) {
+            this.updateStatus(displayState.statusText);
+        }
+    }
+
+    /**
      * Show error message
      */
     showError(message) {

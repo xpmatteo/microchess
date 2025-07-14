@@ -53,6 +53,25 @@ export class Controller {
     }
 
     /**
+     * Update piece selection and display highlights
+     */
+    updatePieceSelection(rank, file) {
+        try {
+            this.selectedSquare = { rank, file };
+            this.view.clearHighlights();
+            this.view.showSelectedPiece(rank, file);
+            
+            // Show valid moves for this piece
+            const validMoves = this.gameState.getValidMovesForPiece(rank, file);
+            this.view.showValidMoves(validMoves);
+        } catch (error) {
+            console.error('Error updating piece selection:', error.message);
+            this.selectedSquare = null; // Clear invalid selection
+            this.view.showError(`Error updating selection: ${error.message}`);
+        }
+    }
+
+    /**
      * Try to select a square (if it contains a piece of the current player)
      */
     trySelectSquare(rank, file) {
@@ -61,13 +80,7 @@ export class Controller {
             const currentTurn = this.gameState.getCurrentTurn();
 
             if (piece && piece.color === currentTurn) {
-                this.selectedSquare = { rank, file };
-                this.view.clearHighlights();
-                this.view.showSelectedPiece(rank, file);
-                
-                // Show valid moves for this piece
-                const validMoves = this.gameState.getValidMovesForPiece(rank, file);
-                this.view.showValidMoves(validMoves);
+                this.updatePieceSelection(rank, file);
             }
         } catch (error) {
             console.error('Error selecting square:', error.message);
@@ -149,62 +162,52 @@ export class Controller {
      * Update the view based on current game state
      */
     updateView() {
-        // Clear existing highlights (except selected piece and valid moves)
-        this.view.clearHighlights();
+        // Prepare display state object
+        const displayState = {
+            board: this.gameState.getBoard(),
+            lastMove: this.gameState.getLastMove(),
+            kingInCheck: this.gameState.getKingInCheck(),
+            statusText: this.getStatusText()
+        };
         
-        // Re-show selected piece if any
+        // Add selected piece info if any
         if (this.selectedSquare) {
             try {
-                this.view.showSelectedPiece(this.selectedSquare.rank, this.selectedSquare.file);
                 const validMoves = this.gameState.getValidMovesForPiece(this.selectedSquare.rank, this.selectedSquare.file);
-                this.view.showValidMoves(validMoves);
+                displayState.selectedPiece = {
+                    rank: this.selectedSquare.rank,
+                    file: this.selectedSquare.file,
+                    validMoves: validMoves
+                };
             } catch (error) {
-                console.error('Error updating view for selected piece:', error.message);
+                console.error('Error getting valid moves for selected piece:', error.message);
                 this.selectedSquare = null; // Clear invalid selection
                 this.view.showError(`Error updating display: ${error.message}`);
             }
         }
         
-        // Show last move
-        const lastMove = this.gameState.getLastMove();
-        if (lastMove) {
-            this.view.showLastMove(lastMove.from.rank, lastMove.from.file, lastMove.to.rank, lastMove.to.file);
-        }
-        
-        // Show check warning
-        const kingInCheck = this.gameState.getKingInCheck();
-        if (kingInCheck) {
-            this.view.showCheckWarning(kingInCheck.rank, kingInCheck.file);
-        }
-        
-        // Update board display
-        this.view.renderPieces(this.gameState.getBoard());
-        
-        // Update status
-        this.updateStatus();
+        // Update view with consolidated state
+        this.view.updateDisplay(displayState);
     }
 
     /**
-     * Update status display based on game state
+     * Get status text based on game state
      */
-    updateStatus() {
+    getStatusText() {
         const currentTurn = this.gameState.getCurrentTurn();
         const gameStatus = this.gameState.getGameStatus();
         
-        let statusText;
         if (gameStatus === GAME_STATUS.CHECKMATE) {
             const winner = currentTurn === COLORS.WHITE ? DISPLAY_NAMES.BLACK : DISPLAY_NAMES.WHITE;
-            statusText = `Checkmate! ${winner} wins!`;
+            return `Checkmate! ${winner} wins!`;
         } else if (gameStatus === GAME_STATUS.STALEMATE) {
-            statusText = 'Stalemate! Draw!';
+            return 'Stalemate! Draw!';
         } else if (gameStatus === GAME_STATUS.RESIGNED) {
-            statusText = 'Game resigned';
+            return 'Game resigned';
         } else {
             const turnText = currentTurn === COLORS.WHITE ? DISPLAY_NAMES.WHITE : DISPLAY_NAMES.BLACK;
-            statusText = `${turnText} to move`;
+            return `${turnText} to move`;
         }
-        
-        this.view.updateStatus(statusText);
     }
 
     /**
