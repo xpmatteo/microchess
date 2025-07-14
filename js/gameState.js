@@ -6,6 +6,28 @@ import { isValidMove, getPossibleMoves } from './moves.js';
 import { GAME_STATUS, COLORS, BOARD_RANKS, BOARD_FILES } from './constants.js';
 
 export class GameState {
+    /**
+     * Validate rank and file parameters
+     * @param {number} rank - The rank (0-4)
+     * @param {number} file - The file (0-3)
+     * @throws {Error} - If parameters are invalid types, NaN, or out of bounds
+     */
+    validatePosition(rank, file) {
+        // Validate parameter types
+        if (typeof rank !== 'number' || typeof file !== 'number') {
+            throw new Error(`Invalid parameter types: rank=${typeof rank}, file=${typeof file}. Both must be numbers.`);
+        }
+        
+        // Validate for NaN
+        if (isNaN(rank) || isNaN(file)) {
+            throw new Error(`Invalid parameter values: rank=${rank}, file=${file}. Both must be valid numbers.`);
+        }
+        
+        // Validate bounds
+        if (rank < 0 || rank >= BOARD_RANKS || file < 0 || file >= BOARD_FILES) {
+            throw new Error(`Position out of bounds: rank=${rank}, file=${file}. Valid range: rank(0-${BOARD_RANKS-1}), file(0-${BOARD_FILES-1}).`);
+        }
+    }
     constructor(board = null) {
         this.board = board ? this.copyBoard(board) : this.copyBoard(INITIAL_POSITION);
         this.currentTurn = COLORS.WHITE;
@@ -52,11 +74,13 @@ export class GameState {
 
     /**
      * Get piece at position
+     * @param {number} rank - The rank (0-4)
+     * @param {number} file - The file (0-3)
+     * @returns {Object|null} - The piece object or null if empty/invalid
+     * @throws {Error} - If parameters are invalid types
      */
     getPieceAt(rank, file) {
-        if (rank < 0 || rank >= BOARD_RANKS || file < 0 || file >= BOARD_FILES) {
-            return null;
-        }
+        this.validatePosition(rank, file);
         return this.board[rank][file];
     }
 
@@ -64,11 +88,13 @@ export class GameState {
      * Set piece at position
      */
     setPieceAt(rank, file, piece) {
-        if (rank < 0 || rank >= BOARD_RANKS || file < 0 || file >= BOARD_FILES) {
+        try {
+            this.validatePosition(rank, file);
+            this.board[rank][file] = piece;
+            return true;
+        } catch (error) {
             return false;
         }
-        this.board[rank][file] = piece;
-        return true;
     }
 
     /**
@@ -272,9 +298,16 @@ export class GameState {
 
     /**
      * Get valid moves for a piece at a specific position
+     * @param {number} rank - The rank (0-4) 
+     * @param {number} file - The file (0-3)
+     * @returns {Array} - Array of valid move objects, empty if no valid moves
+     * @throws {Error} - If parameters are invalid or position is out of bounds
      */
     getValidMovesForPiece(rank, file) {
+        // Validate parameters and get piece (throws on invalid input)
         const piece = this.getPieceAt(rank, file);
+        
+        // Return empty array if no piece or wrong turn (not an error)
         if (!piece || piece.color !== this.currentTurn) {
             return [];
         }

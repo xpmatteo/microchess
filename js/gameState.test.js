@@ -260,6 +260,96 @@ describe('GameState Module', () => {
     });
   });
 
+  describe('Error Handling', () => {
+    let gameState;
+    
+    beforeEach(() => {
+      gameState = new GameState();
+    });
+    
+    describe('getPieceAt', () => {
+      test('should throw error for non-numeric rank', () => {
+        expect(() => gameState.getPieceAt('invalid', 0)).toThrow('Invalid parameter types: rank=string, file=number. Both must be numbers.');
+      });
+      
+      test('should throw error for non-numeric file', () => {
+        expect(() => gameState.getPieceAt(0, 'invalid')).toThrow('Invalid parameter types: rank=number, file=string. Both must be numbers.');
+      });
+      
+      test('should throw error for both non-numeric parameters', () => {
+        expect(() => gameState.getPieceAt('invalid', 'invalid')).toThrow('Invalid parameter types: rank=string, file=string. Both must be numbers.');
+      });
+      
+      test('should throw error for null parameters', () => {
+        expect(() => gameState.getPieceAt(null, 0)).toThrow('Invalid parameter types: rank=object, file=number. Both must be numbers.');
+        expect(() => gameState.getPieceAt(0, null)).toThrow('Invalid parameter types: rank=number, file=object. Both must be numbers.');
+      });
+      
+      test('should throw error for undefined parameters', () => {
+        expect(() => gameState.getPieceAt(undefined, 0)).toThrow('Invalid parameter types: rank=undefined, file=number. Both must be numbers.');
+        expect(() => gameState.getPieceAt(0, undefined)).toThrow('Invalid parameter types: rank=number, file=undefined. Both must be numbers.');
+      });
+      
+      test('should throw error for NaN parameters', () => {
+        expect(() => gameState.getPieceAt(NaN, 0)).toThrow('Invalid parameter values: rank=NaN, file=0. Both must be valid numbers.');
+        expect(() => gameState.getPieceAt(0, NaN)).toThrow('Invalid parameter values: rank=0, file=NaN. Both must be valid numbers.');
+      });
+      
+      test('should throw error for negative rank', () => {
+        expect(() => gameState.getPieceAt(-1, 0)).toThrow('Position out of bounds: rank=-1, file=0. Valid range: rank(0-4), file(0-3).');
+      });
+      
+      test('should throw error for negative file', () => {
+        expect(() => gameState.getPieceAt(0, -1)).toThrow('Position out of bounds: rank=0, file=-1. Valid range: rank(0-4), file(0-3).');
+      });
+      
+      test('should throw error for rank too high', () => {
+        expect(() => gameState.getPieceAt(5, 0)).toThrow('Position out of bounds: rank=5, file=0. Valid range: rank(0-4), file(0-3).');
+      });
+      
+      test('should throw error for file too high', () => {
+        expect(() => gameState.getPieceAt(0, 4)).toThrow('Position out of bounds: rank=0, file=4. Valid range: rank(0-4), file(0-3).');
+      });
+      
+      test('should throw error for both coordinates out of bounds', () => {
+        expect(() => gameState.getPieceAt(10, 10)).toThrow('Position out of bounds: rank=10, file=10. Valid range: rank(0-4), file(0-3).');
+      });
+    });
+    
+    describe('getValidMovesForPiece', () => {
+      test('should throw error for non-numeric rank', () => {
+        expect(() => gameState.getValidMovesForPiece('invalid', 0)).toThrow('Invalid parameter types: rank=string, file=number. Both must be numbers.');
+      });
+      
+      test('should throw error for non-numeric file', () => {
+        expect(() => gameState.getValidMovesForPiece(0, 'invalid')).toThrow('Invalid parameter types: rank=number, file=string. Both must be numbers.');
+      });
+      
+      test('should throw error for out of bounds position', () => {
+        expect(() => gameState.getValidMovesForPiece(-1, 0)).toThrow('Position out of bounds: rank=-1, file=0. Valid range: rank(0-4), file(0-3).');
+        expect(() => gameState.getValidMovesForPiece(0, -1)).toThrow('Position out of bounds: rank=0, file=-1. Valid range: rank(0-4), file(0-3).');
+        expect(() => gameState.getValidMovesForPiece(5, 0)).toThrow('Position out of bounds: rank=5, file=0. Valid range: rank(0-4), file(0-3).');
+        expect(() => gameState.getValidMovesForPiece(0, 4)).toThrow('Position out of bounds: rank=0, file=4. Valid range: rank(0-4), file(0-3).');
+      });
+      
+      test('should return empty array for valid position with no piece', () => {
+        expect(gameState.getValidMovesForPiece(2, 2)).toEqual([]);
+      });
+      
+      test('should return empty array for opponent piece', () => {
+        gameState.setCurrentTurn('white');
+        expect(gameState.getValidMovesForPiece(4, 0)).toEqual([]); // Black king
+      });
+      
+      test('should return valid moves for own piece', () => {
+        gameState.setCurrentTurn('white');
+        const moves = gameState.getValidMovesForPiece(1, 3); // White pawn
+        expect(Array.isArray(moves)).toBe(true);
+        expect(moves.length).toBeGreaterThan(0);
+      });
+    });
+  });
+
   describe('Visual Feedback Methods', () => {
     test('should return last move after making a move', () => {
       const gameState = new GameState();

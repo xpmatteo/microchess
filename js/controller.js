@@ -56,17 +56,22 @@ export class Controller {
      * Try to select a square (if it contains a piece of the current player)
      */
     trySelectSquare(rank, file) {
-        const piece = this.gameState.getPieceAt(rank, file);
-        const currentTurn = this.gameState.getCurrentTurn();
+        try {
+            const piece = this.gameState.getPieceAt(rank, file);
+            const currentTurn = this.gameState.getCurrentTurn();
 
-        if (piece && piece.color === currentTurn) {
-            this.selectedSquare = { rank, file };
-            this.view.clearHighlights();
-            this.view.showSelectedPiece(rank, file);
-            
-            // Show valid moves for this piece
-            const validMoves = this.gameState.getValidMovesForPiece(rank, file);
-            this.view.showValidMoves(validMoves);
+            if (piece && piece.color === currentTurn) {
+                this.selectedSquare = { rank, file };
+                this.view.clearHighlights();
+                this.view.showSelectedPiece(rank, file);
+                
+                // Show valid moves for this piece
+                const validMoves = this.gameState.getValidMovesForPiece(rank, file);
+                this.view.showValidMoves(validMoves);
+            }
+        } catch (error) {
+            console.error('Error selecting square:', error.message);
+            this.view.showError(`Invalid position: ${error.message}`);
         }
     }
 
@@ -149,9 +154,15 @@ export class Controller {
         
         // Re-show selected piece if any
         if (this.selectedSquare) {
-            this.view.showSelectedPiece(this.selectedSquare.rank, this.selectedSquare.file);
-            const validMoves = this.gameState.getValidMovesForPiece(this.selectedSquare.rank, this.selectedSquare.file);
-            this.view.showValidMoves(validMoves);
+            try {
+                this.view.showSelectedPiece(this.selectedSquare.rank, this.selectedSquare.file);
+                const validMoves = this.gameState.getValidMovesForPiece(this.selectedSquare.rank, this.selectedSquare.file);
+                this.view.showValidMoves(validMoves);
+            } catch (error) {
+                console.error('Error updating view for selected piece:', error.message);
+                this.selectedSquare = null; // Clear invalid selection
+                this.view.showError(`Error updating display: ${error.message}`);
+            }
         }
         
         // Show last move

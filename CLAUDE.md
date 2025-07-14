@@ -157,3 +157,11 @@ Each step should be implemented incrementally with testing before proceeding to 
 
 ## Development Server Notes
 - No need to ever restart the http server; reloading the page is enough
+
+## Error Handling Improvements (2025-07-14)
+- **Enhanced getPieceAt/getValidMovesForPiece error handling** - Added comprehensive parameter validation
+- **Consolidated validation logic** - Created validatePosition() helper method for DRY principle
+- **Added robust error messages** - Clear error messages for type validation, NaN detection, and bounds checking
+- **Controller error handling** - Added try-catch blocks in controller to handle validation errors gracefully
+- **Comprehensive test coverage** - Added 17 new unit tests covering all error scenarios
+- **Key improvement**: Methods now throw descriptive errors instead of silently returning null/empty arrays for invalid input

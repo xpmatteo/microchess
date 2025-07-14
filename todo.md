@@ -85,9 +85,9 @@
     - [ ] Implement delta rendering (only update changed squares, not full board re-render)
     - [ ] Optimize highlight clearing with cached element references
   - [ ] **Code Quality Fixes**
-    - [ ] Add BOARD_RANKS=5, BOARD_FILES=4 constants to eliminate magic numbers
+    - [x] Add BOARD_RANKS=5, BOARD_FILES=4 constants to eliminate magic numbers
     - [ ] Fix View DI violations (pass button elements via constructor)
-    - [ ] Add proper error handling for getPieceAt/getValidMovesForPiece
+    - [x] Add proper error handling for getPieceAt/getValidMovesForPiece
   - [ ] **Architecture Improvements**
     - [ ] Consolidate controller.updateView() redundant view method calls
     - [ ] Create single updatePieceSelection() method instead of multiple calls
