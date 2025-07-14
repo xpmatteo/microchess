@@ -4,13 +4,14 @@
 import { jest } from '@jest/globals';
 import { GameState } from './gameState.js';
 import { INITIAL_POSITION } from './pieces.js';
+import { BOARD_RANKS, BOARD_FILES } from './constants.js';
 
 // Helper function to create test board
 function createTestBoard() {
   const board = [];
-  for (let rank = 0; rank < 5; rank++) {
+  for (let rank = 0; rank < BOARD_RANKS; rank++) {
     board[rank] = [];
-    for (let file = 0; file < 4; file++) {
+    for (let file = 0; file < BOARD_FILES; file++) {
       board[rank][file] = null;
     }
   }

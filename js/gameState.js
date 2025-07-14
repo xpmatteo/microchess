@@ -3,7 +3,7 @@
 
 import { INITIAL_POSITION } from './pieces.js';
 import { isValidMove, getPossibleMoves } from './moves.js';
-import { GAME_STATUS, COLORS } from './constants.js';
+import { GAME_STATUS, COLORS, BOARD_RANKS, BOARD_FILES } from './constants.js';
 
 export class GameState {
     constructor(board = null) {
@@ -54,7 +54,7 @@ export class GameState {
      * Get piece at position
      */
     getPieceAt(rank, file) {
-        if (rank < 0 || rank >= 5 || file < 0 || file >= 4) {
+        if (rank < 0 || rank >= BOARD_RANKS || file < 0 || file >= BOARD_FILES) {
             return null;
         }
         return this.board[rank][file];
@@ -64,7 +64,7 @@ export class GameState {
      * Set piece at position
      */
     setPieceAt(rank, file, piece) {
-        if (rank < 0 || rank >= 5 || file < 0 || file >= 4) {
+        if (rank < 0 || rank >= BOARD_RANKS || file < 0 || file >= BOARD_FILES) {
             return false;
         }
         this.board[rank][file] = piece;
@@ -143,8 +143,8 @@ export class GameState {
         const oppositeColor = color === COLORS.WHITE ? COLORS.BLACK : COLORS.WHITE;
 
         // Check if any opponent piece can attack the king
-        for (let rank = 0; rank < 5; rank++) {
-            for (let file = 0; file < 4; file++) {
+        for (let rank = 0; rank < BOARD_RANKS; rank++) {
+            for (let file = 0; file < BOARD_FILES; file++) {
                 const piece = this.board[rank][file];
                 if (piece && piece.color === oppositeColor) {
                     if (isValidMove(this.board, { rank, file }, kingPos, piece.piece, piece.color)) {
@@ -161,8 +161,8 @@ export class GameState {
      * Find king position for a color
      */
     findKingPosition(color) {
-        for (let rank = 0; rank < 5; rank++) {
-            for (let file = 0; file < 4; file++) {
+        for (let rank = 0; rank < BOARD_RANKS; rank++) {
+            for (let file = 0; file < BOARD_FILES; file++) {
                 const piece = this.board[rank][file];
                 if (piece && piece.piece === 'K' && piece.color === color) {
                     return { rank, file };
@@ -202,8 +202,8 @@ export class GameState {
      * Check if a color has any legal moves
      */
     hasLegalMoves(color) {
-        for (let rank = 0; rank < 5; rank++) {
-            for (let file = 0; file < 4; file++) {
+        for (let rank = 0; rank < BOARD_RANKS; rank++) {
+            for (let file = 0; file < BOARD_FILES; file++) {
                 const piece = this.board[rank][file];
                 if (piece && piece.color === color) {
                     const possibleMoves = getPossibleMoves(this.board, { rank, file }, piece.piece, piece.color);

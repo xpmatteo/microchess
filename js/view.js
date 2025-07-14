@@ -2,6 +2,7 @@
 // ABOUTME: Responsible for board display, piece rendering, visual feedback, and status updates
 
 import { PIECE_SYMBOLS } from './pieces.js';
+import { BOARD_RANKS, BOARD_FILES } from './constants.js';
 
 export class View {
     constructor(gameContainer, boardElement, statusElement, controlsElement) {
@@ -47,7 +48,7 @@ export class View {
         // Create rank labels (left side)
         const rankLabels = document.createElement('div');
         rankLabels.className = 'rank-labels';
-        for (let rank = 4; rank >= 0; rank--) {
+        for (let rank = BOARD_RANKS - 1; rank >= 0; rank--) {
             const label = document.createElement('div');
             label.className = 'rank-label';
             label.textContent = (rank + 1).toString();
@@ -59,8 +60,8 @@ export class View {
         boardGrid.className = 'board-grid';
 
         // Create squares (rank 4 at top, rank 0 at bottom)
-        for (let rank = 4; rank >= 0; rank--) {
-            for (let file = 0; file < 4; file++) {
+        for (let rank = BOARD_RANKS - 1; rank >= 0; rank--) {
+            for (let file = 0; file < BOARD_FILES; file++) {
                 const square = document.createElement('div');
                 square.className = 'square';
                 
@@ -90,7 +91,7 @@ export class View {
         // Create file labels (bottom)
         const fileLabels = document.createElement('div');
         fileLabels.className = 'file-labels';
-        for (let file = 0; file < 4; file++) {
+        for (let file = 0; file < BOARD_FILES; file++) {
             const label = document.createElement('div');
             label.className = 'file-label';
             label.textContent = String.fromCharCode(97 + file); // 'a', 'b', 'c', 'd'
@@ -157,8 +158,8 @@ export class View {
         existingPieces.forEach(piece => piece.remove());
 
         // Render pieces from current board state
-        for (let rank = 0; rank < 5; rank++) {
-            for (let file = 0; file < 4; file++) {
+        for (let rank = 0; rank < BOARD_RANKS; rank++) {
+            for (let file = 0; file < BOARD_FILES; file++) {
                 const piece = board[rank][file];
                 if (piece !== null) {
                     const square = document.querySelector(`[data-file="${file}"][data-rank="${rank}"]`);

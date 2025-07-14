@@ -1,6 +1,8 @@
 // ABOUTME: Move validation engine for microchess game with piece movement rules
 // ABOUTME: Handles legal move validation, path checking, and possible move generation
 
+import { BOARD_RANKS, BOARD_FILES } from './constants.js';
+
 /**
  * Check if a path between two squares is clear (no pieces blocking)
  */
@@ -40,7 +42,7 @@ export function isSquareAttacked(board, square, attackingColor) {
  */
 export function isValidMove(board, from, to, piece, color) {
     // Basic boundary checks
-    if (to.rank < 0 || to.rank >= 5 || to.file < 0 || to.file >= 4) {
+    if (to.rank < 0 || to.rank >= BOARD_RANKS || to.file < 0 || to.file >= BOARD_FILES) {
         return false;
     }
     
@@ -154,8 +156,8 @@ export function getPossibleMoves(board, position, piece, color) {
     const moves = [];
     
     // Check all squares on the board
-    for (let rank = 0; rank < 5; rank++) {
-        for (let file = 0; file < 4; file++) {
+    for (let rank = 0; rank < BOARD_RANKS; rank++) {
+        for (let file = 0; file < BOARD_FILES; file++) {
             const to = { rank, file };
             if (isValidMove(board, position, to, piece, color)) {
                 moves.push(to);

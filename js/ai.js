@@ -1,6 +1,8 @@
 // ABOUTME: AI evaluation engine for microchess with position scoring and material counting
 // ABOUTME: Implements evaluation function for piece values, mobility, pawn structure, and king safety
 
+import { BOARD_RANKS, BOARD_FILES } from './constants.js';
+
 /**
  * Piece values for evaluation
  */
@@ -19,8 +21,8 @@ export const PIECE_VALUES = {
 export function countMaterial(board, color) {
     let materialValue = 0;
     
-    for (let rank = 0; rank < 5; rank++) {
-        for (let file = 0; file < 4; file++) {
+    for (let rank = 0; rank < BOARD_RANKS; rank++) {
+        for (let file = 0; file < BOARD_FILES; file++) {
             const piece = board[rank][file];
             if (piece && piece.color === color) {
                 materialValue += PIECE_VALUES[piece.piece];
@@ -37,8 +39,8 @@ export function countMaterial(board, color) {
 export function evaluatePawnStructure(board, color) {
     let pawnScore = 0;
     
-    for (let rank = 0; rank < 5; rank++) {
-        for (let file = 0; file < 4; file++) {
+    for (let rank = 0; rank < BOARD_RANKS; rank++) {
+        for (let file = 0; file < BOARD_FILES; file++) {
             const piece = board[rank][file];
             if (piece && piece.color === color && piece.piece === 'P') {
                 // Calculate advancement bonus based on how far the pawn has moved
@@ -67,8 +69,8 @@ export function evaluatePawnStructure(board, color) {
  */
 export function evaluateKingSafety(board, color) {
     // Find the king
-    for (let rank = 0; rank < 5; rank++) {
-        for (let file = 0; file < 4; file++) {
+    for (let rank = 0; rank < BOARD_RANKS; rank++) {
+        for (let file = 0; file < BOARD_FILES; file++) {
             const piece = board[rank][file];
             if (piece && piece.color === color && piece.piece === 'K') {
                 // Penalty for being in the center (exposed)
@@ -122,8 +124,8 @@ function evaluateCenterControl(board, color) {
     let centerControl = 0;
     
     // Check if pieces are controlling central squares
-    for (let rank = 0; rank < 5; rank++) {
-        for (let file = 0; file < 4; file++) {
+    for (let rank = 0; rank < BOARD_RANKS; rank++) {
+        for (let file = 0; file < BOARD_FILES; file++) {
             const piece = board[rank][file];
             if (piece && piece.color === color) {
                 // Bonus for pieces in or near center

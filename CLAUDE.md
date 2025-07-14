@@ -154,3 +154,6 @@ Each step should be implemented incrementally with testing before proceeding to 
 - **Key insight**: Constructor dependency injection makes components highly testable and eliminates hidden coupling
 - **Added Playwright for end-to-end testing** - Browser automation to test actual user interactions
 - **Architectural principle established**: ALWAYS use MVC + dependency injection, NO exceptions
+
+## Development Server Notes
+- No need to ever restart the http server; reloading the page is enough

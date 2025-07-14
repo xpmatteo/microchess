@@ -3,6 +3,7 @@
 
 import { jest } from '@jest/globals';
 import { PIECE_SYMBOLS, INITIAL_POSITION } from './pieces.js';
+import { BOARD_RANKS, BOARD_FILES } from './constants.js';
 
 describe('Pieces Module', () => {
   describe('Piece Symbols', () => {
@@ -37,9 +38,9 @@ describe('Pieces Module', () => {
     });
 
     test('should be a 5x4 board', () => {
-      expect(INITIAL_POSITION).toHaveLength(5); // 5 ranks
+      expect(INITIAL_POSITION).toHaveLength(BOARD_RANKS); // 5 ranks
       INITIAL_POSITION.forEach(rank => {
-        expect(rank).toHaveLength(4); // 4 files
+        expect(rank).toHaveLength(BOARD_FILES); // 4 files
       });
     });
 
@@ -92,8 +93,8 @@ describe('Pieces Module', () => {
       let blackCount = 0;
       let totalPieces = 0;
 
-      for (let rank = 0; rank < 5; rank++) {
-        for (let file = 0; file < 4; file++) {
+      for (let rank = 0; rank < BOARD_RANKS; rank++) {
+        for (let file = 0; file < BOARD_FILES; file++) {
           const square = INITIAL_POSITION[rank][file];
           if (square !== null) {
             totalPieces++;

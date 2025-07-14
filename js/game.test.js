@@ -6,6 +6,7 @@ import { Game } from './game.js';
 import { View } from './view.js';
 import { Controller } from './controller.js';
 import { GameState } from './gameState.js';
+import { BOARD_RANKS, BOARD_FILES } from './constants.js';
 
 // Mock DOM setup
 beforeEach(() => {
@@ -55,9 +56,9 @@ describe('Game Class', () => {
       const gameState = game.getController().getGameState();
       const board = gameState.getBoard();
       
-      expect(board).toHaveLength(5); // 5 ranks
+      expect(board).toHaveLength(BOARD_RANKS); // 5 ranks
       board.forEach(rank => {
-        expect(rank).toHaveLength(4); // 4 files
+        expect(rank).toHaveLength(BOARD_FILES); // 4 files
       });
     });
 
@@ -67,13 +68,13 @@ describe('Game Class', () => {
       
       // Check that board squares were created
       const squares = document.querySelectorAll('.square');
-      expect(squares).toHaveLength(20); // 4x5 = 20 squares
+      expect(squares).toHaveLength(BOARD_RANKS * BOARD_FILES); // 4x5 = 20 squares
       
       // Check that rank and file labels were created
       const rankLabels = document.querySelectorAll('.rank-label');
       const fileLabels = document.querySelectorAll('.file-label');
-      expect(rankLabels).toHaveLength(5);
-      expect(fileLabels).toHaveLength(4);
+      expect(rankLabels).toHaveLength(BOARD_RANKS);
+      expect(fileLabels).toHaveLength(BOARD_FILES);
     });
 
     test('should render initial pieces', () => {
