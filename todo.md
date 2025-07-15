@@ -79,12 +79,12 @@
   - [x] Test evaluation
   - [x] Verify scores
 
-- [ ] Step 11: Minimax (Prompt 11)
-  - [ ] Implement minimax algorithm
-  - [ ] Add alpha-beta pruning
-  - [ ] Optimize move ordering
-  - [ ] Test AI decisions
-  - [ ] Verify performance
+- [x] Step 11: Minimax (Prompt 11)
+  - [x] Implement minimax algorithm
+  - [x] Add alpha-beta pruning
+  - [x] Optimize move ordering
+  - [x] Test AI decisions
+  - [x] Verify performance
 
 - [ ] Step 12: AI Integration (Prompt 12)
   - [ ] Connect AI to game

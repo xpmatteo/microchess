@@ -1,7 +1,7 @@
 // ABOUTME: AI evaluation engine for microchess with position scoring and material counting
 // ABOUTME: Implements evaluation function for piece values, mobility, pawn structure, and king safety
 
-import { BOARD_RANKS, BOARD_FILES } from './constants.js';
+import { BOARD_RANKS, BOARD_FILES, COLORS, GAME_STATUS } from './constants.js';
 
 /**
  * Piece values for evaluation
@@ -138,4 +138,180 @@ function evaluateCenterControl(board, color) {
     }
     
     return centerControl;
+}
+
+/**
+ * Get all legal moves for a color
+ */
+function getAllLegalMoves(gameState, color) {
+    const moves = [];
+    
+    for (let rank = 0; rank < BOARD_RANKS; rank++) {
+        for (let file = 0; file < BOARD_FILES; file++) {
+            const piece = gameState.getPieceAt(rank, file);
+            if (piece && piece.color === color) {
+                const validMoves = gameState.getValidMovesForPiece(rank, file);
+                moves.push(...validMoves);
+            }
+        }
+    }
+    
+    return moves;
+}
+
+/**
+ * Order moves to improve alpha-beta pruning efficiency
+ * Prioritizes captures and checks
+ */
+function orderMoves(gameState, moves) {
+    return moves.sort((a, b) => {
+        // Prioritize captures (moves to squares with enemy pieces)
+        const targetA = gameState.getPieceAt(a.toRank, a.toFile);
+        const targetB = gameState.getPieceAt(b.toRank, b.toFile);
+        
+        if (targetA && !targetB) return -1; // A is capture, B is not
+        if (!targetA && targetB) return 1;  // B is capture, A is not
+        
+        // If both are captures, prioritize higher-value captures
+        if (targetA && targetB) {
+            const valueA = PIECE_VALUES[targetA.piece];
+            const valueB = PIECE_VALUES[targetB.piece];
+            return valueB - valueA;
+        }
+        
+        // No special ordering for non-captures
+        return 0;
+    });
+}
+
+/**
+ * Minimax algorithm with alpha-beta pruning
+ * @param {GameState} gameState - Current game state
+ * @param {number} depth - Search depth remaining
+ * @param {number} alpha - Alpha value for pruning
+ * @param {number} beta - Beta value for pruning
+ * @param {boolean} maximizingPlayer - True if maximizing player's turn
+ * @returns {number} - Evaluation score
+ */
+export function minimax(gameState, depth, alpha, beta, maximizingPlayer) {
+    const currentColor = gameState.getCurrentTurn();
+    const gameStatus = gameState.getGameStatus();
+    
+    // Terminal cases
+    if (gameStatus === GAME_STATUS.CHECKMATE) {
+        // If it's checkmate, the current player has lost
+        // Return a score that depends on depth to prefer quicker mates
+        return maximizingPlayer ? (-50000 + depth) : (50000 - depth);
+    }
+    
+    if (gameStatus === GAME_STATUS.STALEMATE) {
+        return 0; // Draw
+    }
+    
+    // Depth limit reached - evaluate position
+    if (depth === 0) {
+        // Evaluate from the perspective of the maximizing player
+        const evalColor = maximizingPlayer ? COLORS.WHITE : COLORS.BLACK;
+        return evaluatePosition(gameState.getBoard(), evalColor);
+    }
+    
+    const moves = getAllLegalMoves(gameState, currentColor);
+    
+    // No moves available (shouldn't happen with game status check above)
+    if (moves.length === 0) {
+        return 0;
+    }
+    
+    // Order moves for better pruning
+    const orderedMoves = orderMoves(gameState, moves);
+    
+    if (maximizingPlayer) {
+        let maxEval = -Infinity;
+        
+        for (const move of orderedMoves) {
+            // Make move
+            const success = gameState.executeMove(move);
+            if (!success) continue;
+            
+            // Recursive call
+            const eval_ = minimax(gameState, depth - 1, alpha, beta, false);
+            
+            // Undo move
+            gameState.undoLastMove();
+            
+            maxEval = Math.max(maxEval, eval_);
+            alpha = Math.max(alpha, eval_);
+            
+            // Beta cutoff
+            if (beta <= alpha) {
+                break;
+            }
+        }
+        
+        return maxEval;
+    } else {
+        let minEval = Infinity;
+        
+        for (const move of orderedMoves) {
+            // Make move
+            const success = gameState.executeMove(move);
+            if (!success) continue;
+            
+            // Recursive call
+            const eval_ = minimax(gameState, depth - 1, alpha, beta, true);
+            
+            // Undo move
+            gameState.undoLastMove();
+            
+            minEval = Math.min(minEval, eval_);
+            beta = Math.min(beta, eval_);
+            
+            // Alpha cutoff
+            if (beta <= alpha) {
+                break;
+            }
+        }
+        
+        return minEval;
+    }
+}
+
+/**
+ * Get the best move for the current player
+ * @param {GameState} gameState - Current game state
+ * @param {number} depth - Search depth
+ * @returns {Object|null} - Best move or null if no moves available
+ */
+export function getBestMove(gameState, depth) {
+    const currentColor = gameState.getCurrentTurn();
+    const moves = getAllLegalMoves(gameState, currentColor);
+    
+    if (moves.length === 0) {
+        return null;
+    }
+    
+    // Order moves for better pruning
+    const orderedMoves = orderMoves(gameState, moves);
+    
+    let bestMove = null;
+    let bestEval = -Infinity;
+    
+    for (const move of orderedMoves) {
+        // Make move
+        const success = gameState.executeMove(move);
+        if (!success) continue;
+        
+        // Evaluate position (from opponent's perspective, so negate)
+        const eval_ = -minimax(gameState, depth - 1, -Infinity, Infinity, false);
+        
+        // Undo move
+        gameState.undoLastMove();
+        
+        if (eval_ > bestEval) {
+            bestEval = eval_;
+            bestMove = move;
+        }
+    }
+    
+    return bestMove;
 }
