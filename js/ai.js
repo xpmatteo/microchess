@@ -24,7 +24,7 @@ export function countMaterial(board, color) {
     for (let rank = 0; rank < BOARD_RANKS; rank++) {
         for (let file = 0; file < BOARD_FILES; file++) {
             const piece = board[rank][file];
-            if (piece && piece.color === color) {
+            if (piece && piece.color === color && piece.piece !== 'K') {
                 materialValue += PIECE_VALUES[piece.piece];
             }
         }

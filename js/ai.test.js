@@ -42,13 +42,13 @@ describe('AI Evaluation Module', () => {
       board[0][0] = { piece: 'K', color: 'white' };
       board[4][3] = { piece: 'Q', color: 'black' };
       
-      expect(countMaterial(board, 'white')).toBe(20000);
+      expect(countMaterial(board, 'white')).toBe(0); // King excluded from material count
       expect(countMaterial(board, 'black')).toBe(9);
     });
 
     test('should count material for multiple pieces', () => {
       const board = createTestBoard();
-      // White: King + Rook + Pawn = 20000 + 5 + 1 = 20006
+      // White: Rook + Pawn = 5 + 1 = 6 (King excluded)
       board[0][0] = { piece: 'K', color: 'white' };
       board[0][1] = { piece: 'R', color: 'white' };
       board[1][0] = { piece: 'P', color: 'white' };
@@ -57,7 +57,7 @@ describe('AI Evaluation Module', () => {
       board[4][0] = { piece: 'Q', color: 'black' };
       board[4][1] = { piece: 'N', color: 'black' };
       
-      expect(countMaterial(board, 'white')).toBe(20006);
+      expect(countMaterial(board, 'white')).toBe(6);
       expect(countMaterial(board, 'black')).toBe(12);
     });
   });
