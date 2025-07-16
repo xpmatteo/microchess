@@ -3,9 +3,14 @@
 dev:
 	scripts/shoreman.sh
 
+.PHONY: kill
+kill: 
+	[ -f .shoreman.pid ] && kill $$(cat .shoreman.pid) || true
+	rm -f .shoreman.pid
+
 .PHONY: test
 test:
-	npm test
+	npm run test:all
 
 .PHONY: run
 run:

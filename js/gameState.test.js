@@ -405,4 +405,106 @@ describe('GameState Module', () => {
       expect(gameState.getKingInCheck()).toBe(null);
     });
   });
+
+  describe('Pawn Promotion', () => {
+    test('should detect when white pawn reaches rank 4 (promotion rank)', () => {
+      const board = createTestBoard();
+      // Place white pawn one move away from promotion
+      board[3][1] = { piece: 'P', color: 'white' };
+      
+      const gameState = new GameState(board);
+      gameState.setCurrentTurn('white');
+      
+      // Check promotion detection before executing move
+      const move = { fromRank: 3, fromFile: 1, toRank: 4, toFile: 1 };
+      expect(gameState.isPawnPromotion(move)).toBe(true);
+      
+      // Execute the move
+      const result = gameState.executeMove(move);
+      expect(result).toBe(true);
+    });
+
+    test('should detect when black pawn reaches rank 0 (promotion rank)', () => {
+      const board = createTestBoard();
+      // Place black pawn one move away from promotion
+      board[1][1] = { piece: 'P', color: 'black' };
+      
+      const gameState = new GameState(board);
+      gameState.setCurrentTurn('black');
+      
+      // Check promotion detection before executing move
+      const move = { fromRank: 1, fromFile: 1, toRank: 0, toFile: 1 };
+      expect(gameState.isPawnPromotion(move)).toBe(true);
+      
+      // Execute the move
+      const result = gameState.executeMove(move);
+      expect(result).toBe(true);
+    });
+
+    test('should not detect promotion for non-pawn pieces', () => {
+      const board = createTestBoard();
+      // Place white rook at rank 3
+      board[3][1] = { piece: 'R', color: 'white' };
+      
+      const gameState = new GameState(board);
+      gameState.setCurrentTurn('white');
+      
+      // Move rook to rank 4 (would be promotion rank for pawn)
+      const move = { fromRank: 3, fromFile: 1, toRank: 4, toFile: 1 };
+      const result = gameState.executeMove(move);
+      
+      expect(result).toBe(true);
+      expect(gameState.isPawnPromotion(move)).toBe(false);
+    });
+
+    test('should not detect promotion for pawn not reaching last rank', () => {
+      const board = createTestBoard();
+      // Place white pawn at rank 2
+      board[2][1] = { piece: 'P', color: 'white' };
+      
+      const gameState = new GameState(board);
+      gameState.setCurrentTurn('white');
+      
+      // Move pawn to rank 3 (not promotion rank)
+      const move = { fromRank: 2, fromFile: 1, toRank: 3, toFile: 1 };
+      const result = gameState.executeMove(move);
+      
+      expect(result).toBe(true);
+      expect(gameState.isPawnPromotion(move)).toBe(false);
+    });
+
+    test('should promote white pawn to queen automatically', () => {
+      const board = createTestBoard();
+      // Place white pawn one move away from promotion
+      board[3][1] = { piece: 'P', color: 'white' };
+      
+      const gameState = new GameState(board);
+      gameState.setCurrentTurn('white');
+      
+      // Move pawn to promotion rank
+      const move = { fromRank: 3, fromFile: 1, toRank: 4, toFile: 1 };
+      const result = gameState.executeMove(move);
+      
+      expect(result).toBe(true);
+      const promotedPiece = gameState.getPieceAt(4, 1);
+      expect(promotedPiece).toEqual({ piece: 'Q', color: 'white' });
+    });
+
+    test('should promote black pawn to queen automatically', () => {
+      const board = createTestBoard();
+      // Place black pawn one move away from promotion
+      board[1][1] = { piece: 'P', color: 'black' };
+      
+      const gameState = new GameState(board);
+      gameState.setCurrentTurn('black');
+      
+      // Move pawn to promotion rank
+      const move = { fromRank: 1, fromFile: 1, toRank: 0, toFile: 1 };
+      const result = gameState.executeMove(move);
+      
+      expect(result).toBe(true);
+      const promotedPiece = gameState.getPieceAt(0, 1);
+      expect(promotedPiece).toEqual({ piece: 'Q', color: 'black' });
+    });
+  });
 });

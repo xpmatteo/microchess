@@ -25,7 +25,8 @@ export class Controller {
         this.view.setButtonHandlers({
             newGame: () => this.handleNewGame(),
             resign: () => this.handleResign(),
-            hint: () => this.handleHint()
+            hint: () => this.handleHint(),
+            testScenario: (e) => this.handleTestScenario(e)
         });
         
         // Initialize the view
@@ -190,6 +191,32 @@ export class Controller {
         }
         
         console.log('Hint requested');
+    }
+
+    /**
+     * Handle test scenario selection
+     */
+    handleTestScenario(e) {
+        const scenarioName = e.target.value;
+        
+        if (!scenarioName) {
+            return; // Empty selection, do nothing
+        }
+        
+        try {
+            this.gameState.loadTestScenario(scenarioName);
+            this.selectedSquare = null; // Clear selection
+            this.updateView();
+            this.view.setControlsEnabled(true);
+            
+            // Reset dropdown to empty selection
+            e.target.value = '';
+            
+            console.log(`Loaded test scenario: ${scenarioName}`);
+        } catch (error) {
+            console.error('Error loading test scenario:', error);
+            this.view.updateStatus(`Error: ${error.message}`);
+        }
     }
 
     /**

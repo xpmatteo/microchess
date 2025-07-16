@@ -104,7 +104,7 @@
 - [ ] Rerun AI test suite to verify improvements
 
 ## Critical Game Logic Fixes
-- [ ] Fix pawn promotion bug - promotion not happening at all
+- [x] Fix pawn promotion bug - promotion not happening at all (FIXED: pawns now promote to queen automatically)
 
 ## Phase 5: Polish
 - [ ] Step 13: Persistence (Prompt 13)
@@ -141,14 +141,14 @@
 - [ ] AI pushes passed pawns (FAILING)
 - [ ] Save/load works properly
 - [ ] Color alternation works
-- [ ] Pawn promotion works (FAILING - promotion not happening at all)
+- [x] Pawn promotion works (FIXED - pawns automatically promote to queen)
 - [x] UI is responsive
 - [x] No console errors
 - [ ] Works on mobile
 - [ ] Performance is acceptable
 
 ## Known Issues
-- **Pawn Promotion Bug**: Pawn promotion not happening at all (CRITICAL GAME LOGIC BUG)
+- **Pawn Promotion Bug**: FIXED - Pawns now promote to queen automatically when reaching last rank
 - **AI Queen Move Generation Bug**: Queen shows 0 legal moves when attacked (discovered in test suite)
 - **AI Tactical Blindness**: Misses obvious checkmate in 1 moves
 - **AI Positional Weakness**: Poor piece centralization and pawn advancement priorities

@@ -118,6 +118,16 @@ export class View {
             <button id="new-game-btn">New Game</button>
             <button id="resign-btn" disabled>Resign</button>
             <button id="hint-btn" disabled>Hint</button>
+            <div class="test-scenarios">
+                <label for="test-scenario-select">Test Scenarios:</label>
+                <select id="test-scenario-select">
+                    <option value="">Choose a test scenario...</option>
+                    <option value="white-pawn-promotion">White Pawn Ready to Promote</option>
+                    <option value="black-pawn-promotion">Black Pawn Ready to Promote</option>
+                    <option value="white-pawn-blocked">White Pawn Blocked from Promotion</option>
+                    <option value="black-pawn-blocked">Black Pawn Blocked from Promotion</option>
+                </select>
+            </div>
         `;
     }
 
@@ -137,6 +147,7 @@ export class View {
         const newGameBtn = document.getElementById('new-game-btn');
         const resignBtn = document.getElementById('resign-btn');
         const hintBtn = document.getElementById('hint-btn');
+        const testScenarioSelect = document.getElementById('test-scenario-select');
 
         if (newGameBtn && this.buttonHandlers.newGame) {
             newGameBtn.addEventListener('click', this.buttonHandlers.newGame);
@@ -146,6 +157,9 @@ export class View {
         }
         if (hintBtn && this.buttonHandlers.hint) {
             hintBtn.addEventListener('click', this.buttonHandlers.hint);
+        }
+        if (testScenarioSelect && this.buttonHandlers.testScenario) {
+            testScenarioSelect.addEventListener('change', this.buttonHandlers.testScenario);
         }
     }
 

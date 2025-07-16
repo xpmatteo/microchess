@@ -138,10 +138,19 @@ export class GameState {
             return false;
         }
 
+        // Check if this is a pawn promotion move (before executing the move)
+        const isPromotion = this.isPawnPromotion({ fromRank: from.rank, fromFile: from.file, toRank: to.rank, toFile: to.file });
+
         // Execute the move
         const capturedPiece = this.board[to.rank][to.file];
         this.board[to.rank][to.file] = this.board[from.rank][from.file];
         this.board[from.rank][from.file] = null;
+
+        // Handle pawn promotion
+        if (isPromotion) {
+            // Always promote to queen for now
+            this.board[to.rank][to.file].piece = 'Q';
+        }
 
         // Add to move history
         this.moveHistory.push({
@@ -370,5 +379,104 @@ export class GameState {
             return this.findKingPosition(this.currentTurn);
         }
         return null;
+    }
+
+    /**
+     * Check if a move results in pawn promotion (call before executing move)
+     * @param {Object} move - Move object with fromRank, fromFile, toRank, toFile
+     * @returns {boolean} - True if move is a pawn promotion
+     */
+    isPawnPromotion(move) {
+        // Get the piece at the source position (before move is executed)
+        const sourcePiece = this.board[move.fromRank][move.fromFile];
+        
+        // Must be a pawn
+        if (!sourcePiece || sourcePiece.piece !== 'P') {
+            return false;
+        }
+        
+        // White pawns promote at rank 4, black pawns promote at rank 0
+        if (sourcePiece.color === COLORS.WHITE && move.toRank === 4) {
+            return true;
+        }
+        if (sourcePiece.color === COLORS.BLACK && move.toRank === 0) {
+            return true;
+        }
+        
+        return false;
+    }
+
+    /**
+     * Load a test scenario by name
+     * @param {string} scenarioName - Name of the test scenario to load
+     */
+    loadTestScenario(scenarioName) {
+        const scenarios = this.getTestScenarios();
+        const scenario = scenarios[scenarioName];
+        
+        if (!scenario) {
+            throw new Error(`Unknown test scenario: ${scenarioName}`);
+        }
+        
+        this.board = this.copyBoard(scenario.board);
+        this.currentTurn = scenario.currentTurn;
+        this.gameStatus = GAME_STATUS.PLAYING;
+        this.moveHistory = [];
+    }
+
+    /**
+     * Get all available test scenarios
+     * @returns {Object} - Object containing all test scenarios
+     */
+    getTestScenarios() {
+        return {
+            'white-pawn-promotion': {
+                description: 'White pawn on rank 3, ready to promote on next move',
+                board: [
+                    [null, null, null, {color: 'white', piece: 'K'}], // rank 0
+                    [null, null, null, null], // rank 1
+                    [null, null, null, null], // rank 2
+                    [{color: 'white', piece: 'P'}, null, null, null], // rank 3
+                    [null, null, null, {color: 'black', piece: 'K'}]  // rank 4
+                ],
+                currentTurn: COLORS.WHITE
+            },
+            
+            'black-pawn-promotion': {
+                description: 'Black pawn on rank 1, ready to promote on next move',
+                board: [
+                    [null, null, null, {color: 'white', piece: 'K'}], // rank 0
+                    [{color: 'black', piece: 'P'}, null, null, null], // rank 1
+                    [null, null, null, null], // rank 2
+                    [null, null, null, null], // rank 3
+                    [{color: 'black', piece: 'K'}, null, null, null]  // rank 4
+                ],
+                currentTurn: COLORS.BLACK
+            },
+            
+            'white-pawn-blocked': {
+                description: 'White pawn on rank 3, blocked by black piece',
+                board: [
+                    [null, null, null, {color: 'white', piece: 'K'}], // rank 0
+                    [null, null, null, null], // rank 1
+                    [null, null, null, null], // rank 2
+                    [{color: 'white', piece: 'P'}, null, null, null], // rank 3
+                    [{color: 'black', piece: 'R'}, null, null, {color: 'black', piece: 'K'}]  // rank 4
+                ],
+                currentTurn: COLORS.WHITE
+            },
+            
+            'black-pawn-blocked': {
+                description: 'Black pawn on rank 1, blocked by white piece',
+                board: [
+                    [{color: 'white', piece: 'R'}, null, null, {color: 'white', piece: 'K'}], // rank 0
+                    [{color: 'black', piece: 'P'}, null, null, null], // rank 1
+                    [null, null, null, null], // rank 2
+                    [null, null, null, null], // rank 3
+                    [null, null, null, {color: 'black', piece: 'K'}]  // rank 4
+                ],
+                currentTurn: COLORS.BLACK
+            }
+        };
     }
 }
