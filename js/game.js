@@ -4,6 +4,8 @@
 import { Controller } from './controller.js';
 import { View } from './view.js';
 import { GameState } from './gameState.js';
+import { AIPlayer } from './aiPlayer.js';
+import { COLORS } from './constants.js';
 
 export class Game {
     constructor() {
@@ -28,9 +30,10 @@ export class Game {
             // Create dependencies
             const gameState = new GameState();
             const view = new View(gameContainer, boardElement, statusElement, controlsElement);
+            const aiPlayer = new AIPlayer(COLORS.BLACK, 3); // AI starts as black with depth 3
             
             // Inject dependencies into controller
-            this.controller = new Controller(gameState, view);
+            this.controller = new Controller(gameState, view, aiPlayer);
             this.controller.initialize();
             
             console.log('Microchess game initialized successfully with dependency injection');

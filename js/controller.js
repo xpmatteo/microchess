@@ -4,14 +4,16 @@
 import { GAME_STATUS, COLORS, DISPLAY_NAMES } from './constants.js';
 
 export class Controller {
-    constructor(gameState, view) {
+    constructor(gameState, view, aiPlayer = null) {
         if (!gameState || !view) {
             throw new Error('GameState and View must be provided to Controller constructor');
         }
         
         this.gameState = gameState;
         this.view = view;
+        this.aiPlayer = aiPlayer;
         this.selectedSquare = null; // {rank, file} or null
+        this.isAIThinking = false;
     }
 
     /**
@@ -118,6 +120,9 @@ export class Controller {
             const gameStatus = this.gameState.getGameStatus();
             if (gameStatus === GAME_STATUS.CHECKMATE || gameStatus === GAME_STATUS.STALEMATE) {
                 this.view.setControlsEnabled(false);
+            } else if (this.aiPlayer) {
+                // Trigger AI move after a short delay
+                setTimeout(() => this.handleAIMove(), 200);
             }
         } else {
             // Invalid move - try to select the target square instead
@@ -130,12 +135,24 @@ export class Controller {
      * Handle new game button
      */
     handleNewGame() {
+        // Switch AI color for next game
+        if (this.aiPlayer) {
+            const currentAIColor = this.aiPlayer.getColor();
+            const newAIColor = currentAIColor === COLORS.WHITE ? COLORS.BLACK : COLORS.WHITE;
+            this.aiPlayer.setColor(newAIColor);
+        }
+
         // Reset the game state to initial position
         this.gameState.reset();
         this.deselectSquare();
         this.updateView();
         this.view.setControlsEnabled(true);
         console.log('New game started');
+
+        // If AI is white, make the first move
+        if (this.aiPlayer && this.aiPlayer.getColor() === COLORS.WHITE) {
+            setTimeout(() => this.handleAIMove(), 100);
+        }
     }
 
     /**
@@ -152,9 +169,26 @@ export class Controller {
     /**
      * Handle hint button
      */
-    handleHint() {
-        // Placeholder for AI hint functionality
-        this.view.updateStatus('Hint: Feature not yet implemented');
+    async handleHint() {
+        if (!this.aiPlayer) {
+            this.view.updateStatus('Hint: AI not available');
+            console.log('Hint requested');
+            return;
+        }
+
+        try {
+            const hintMove = await this.aiPlayer.getHint(this.gameState);
+            if (hintMove) {
+                this.view.showValidMoves([hintMove]);
+                this.view.updateStatus('Hint: Consider the highlighted move');
+            } else {
+                this.view.updateStatus('Hint: No good moves found');
+            }
+        } catch (error) {
+            this.view.updateStatus('Hint: Error generating hint');
+            console.error('Error generating hint:', error);
+        }
+        
         console.log('Hint requested');
     }
 
@@ -222,5 +256,55 @@ export class Controller {
      */
     getView() {
         return this.view;
+    }
+
+    /**
+     * Get the AI player (for external access)
+     */
+    getAIPlayer() {
+        return this.aiPlayer;
+    }
+
+    /**
+     * Handle AI move generation and execution
+     */
+    async handleAIMove() {
+        if (!this.aiPlayer || this.isAIThinking) {
+            return;
+        }
+
+        try {
+            this.isAIThinking = true;
+            this.view.setControlsEnabled(false);
+            
+            const aiMove = await this.aiPlayer.getMove(this.gameState);
+            
+            if (aiMove) {
+                const success = this.gameState.executeMove(aiMove);
+                
+                if (success) {
+                    this.updateView();
+                    
+                    // Check if game is over
+                    const gameStatus = this.gameState.getGameStatus();
+                    if (gameStatus === GAME_STATUS.CHECKMATE || gameStatus === GAME_STATUS.STALEMATE) {
+                        this.view.setControlsEnabled(false);
+                    } else {
+                        this.view.setControlsEnabled(true);
+                    }
+                } else {
+                    console.error('AI generated invalid move:', aiMove);
+                    this.view.setControlsEnabled(true);
+                }
+            } else {
+                // AI couldn't generate a move or it's not AI's turn
+                this.view.setControlsEnabled(true);
+            }
+        } catch (error) {
+            console.error('Error handling AI move:', error);
+            this.view.setControlsEnabled(true);
+        } finally {
+            this.isAIThinking = false;
+        }
     }
 }

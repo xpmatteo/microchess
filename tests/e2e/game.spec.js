@@ -221,8 +221,8 @@ test.describe('Microchess Game', () => {
     // Click hint button
     await page.locator('#hint-btn').click();
     
-    // Check that hint message appears
-    await expect(page.locator('#game-status')).toContainText('Hint: Feature not yet implemented');
+    // Check that hint message appears (AI hint is now implemented)
+    await expect(page.locator('#game-status')).toContainText('Hint: Consider the highlighted move');
   });
 
   test('should apply correct CSS classes to squares', async ({ page }) => {

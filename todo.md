@@ -86,12 +86,12 @@
   - [x] Test AI decisions
   - [x] Verify performance
 
-- [ ] Step 12: AI Integration (Prompt 12)
-  - [ ] Connect AI to game
-  - [ ] Add move delays
-  - [ ] Implement hints
-  - [ ] Handle color switching
-  - [ ] Test AI play
+- [x] Step 12: AI Integration (Prompt 12)
+  - [x] Connect AI to game
+  - [x] Add move delays
+  - [x] Implement hints
+  - [x] Handle color switching
+  - [x] Test AI play
 
 ## Phase 5: Polish
 - [ ] Step 13: Persistence (Prompt 13)
