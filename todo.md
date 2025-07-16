@@ -93,6 +93,19 @@
   - [x] Handle color switching
   - [x] Test AI play
 
+## Phase 4.5: AI Quality Improvement (NEW)
+- [ ] Fix critical queen move generation bug (0 legal moves when attacked)
+- [ ] Fix AI tactical blindness - misses checkmate in 1 moves
+- [ ] Enhance threat detection in evaluation function
+- [ ] Fix AI pawn advancement priorities (doesn't push passed pawns)
+- [ ] Improve AI piece centralization logic
+- [ ] Add AI tests for starting position scenarios
+- [ ] Document AI test results and improvement roadmap
+- [ ] Rerun AI test suite to verify improvements
+
+## Critical Game Logic Fixes
+- [ ] Fix pawn promotion bug - promotion not happening at all
+
 ## Phase 5: Polish
 - [ ] Step 13: Persistence (Prompt 13)
   - [ ] Create js/storage.js
@@ -116,21 +129,31 @@
   - [ ] Final verification
 
 ## Testing Checklist
-- [ ] All pieces move correctly
-- [ ] Check/checkmate detection works
-- [ ] Stalemate detection works
-- [ ] AI makes legal moves
-- [ ] AI provides reasonable challenge
+- [x] All pieces move correctly
+- [x] Check/checkmate detection works
+- [x] Stalemate detection works
+- [x] AI makes legal moves
+- [ ] AI provides reasonable challenge (FAILING - see AI Quality Issues)
+- [ ] AI passes tactical test suite (FAILING - 17/27 tests)
+- [ ] AI queen move generation works correctly (FAILING)
+- [ ] AI finds checkmate in 1 moves (FAILING)
+- [ ] AI prioritizes piece centralization (FAILING)
+- [ ] AI pushes passed pawns (FAILING)
 - [ ] Save/load works properly
 - [ ] Color alternation works
-- [ ] Pawn promotion works
-- [ ] UI is responsive
-- [ ] No console errors
+- [ ] Pawn promotion works (FAILING - promotion not happening at all)
+- [x] UI is responsive
+- [x] No console errors
 - [ ] Works on mobile
 - [ ] Performance is acceptable
 
 ## Known Issues
-- None yet (project not started)
+- **Pawn Promotion Bug**: Pawn promotion not happening at all (CRITICAL GAME LOGIC BUG)
+- **AI Queen Move Generation Bug**: Queen shows 0 legal moves when attacked (discovered in test suite)
+- **AI Tactical Blindness**: Misses obvious checkmate in 1 moves
+- **AI Positional Weakness**: Poor piece centralization and pawn advancement priorities
+- **AI Test Results**: Only passes 17/27 strategic tests (63% success rate)
+- **Threat Detection**: AI evaluation function needs enhanced threat awareness
 
 ## Notes
 - Follow prompts in order
